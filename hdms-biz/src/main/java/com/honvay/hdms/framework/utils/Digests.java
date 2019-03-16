@@ -1,8 +1,9 @@
 /**
  * Copyright (c) 2005-2012 springside.org.cn
- *
+ * <p>
  * Licensed under the Apache License, Version 2.0 (the "License");
  */
+/*   Copyright (c) 2019. 本项目所有源码受中华人民共和国著作权法保护，已登记软件著作权。 *     本项目版权归南昌瀚为云科技有限公司所有，本项目仅供学习交流使用，未经许可不得进行商用，开源（社区版）遵守AGPL-3.0协议。 * */
 package com.honvay.hdms.framework.utils;
 
 import java.io.IOException;
@@ -13,9 +14,9 @@ import java.security.SecureRandom;
 
 /**
  * 支持SHA-1/MD5消息摘要的工具类.
- * 
+ *
  * 返回ByteSource，可进一步被编码为Hex, Base64或UrlSafeBase64
- * 
+ *
  * @author calvin
  */
 public class Digests {
@@ -65,13 +66,13 @@ public class Digests {
 
 	/**
 	 * 生成随机的Byte[]作为salt.
-	 * 
+	 *
 	 * @param numBytes byte数组的大小
 	 */
 	public static byte[] generateSalt(int numBytes) {
-	    	if(numBytes <= 0) {
-	    	    throw new RuntimeException("numBytes argument must be a positive integer (1 or larger)");
-	    	}
+		if (numBytes <= 0) {
+			throw new RuntimeException("numBytes argument must be a positive integer (1 or larger)");
+		}
 		byte[] bytes = new byte[numBytes];
 		random.nextBytes(bytes);
 		return bytes;

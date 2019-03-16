@@ -23,7 +23,7 @@
                     <div class="form-group">
                         <label class="col-sm-5 control-label">登录失败次数限制</label>
                         <div class="col-sm-7">
-                            <input type="number" ng-model='appSetting.loginFailLimit'
+                            <input type="number" ng-model='setting.loginFailLimit'
                                    min="3" class="form-control" style="width: 100px"> <span
                                 class="help-block m-b-none">登录失败次数超过设置次数则禁止登录并锁定账户，用户登录成功后清除失败次数</span>
                         </div>
@@ -33,28 +33,28 @@
                         <label class="col-sm-5 control-label">是否需要输入验证码</label>
                         <div class="col-sm-7">
                             <label class="i-switch bg-primary m-t-xs m-r"> <input
-                                    type="checkbox" ng-checked="appSetting.showCaptcha"
-                                    ng-model="appSetting.showCaptcha"> <i></i>
+                                    type="checkbox" ng-checked="setting.showCaptcha"
+                                    ng-model="setting.showCaptcha"> <i></i>
                             </label>
                         </div>
                     </div>
-                    <div class="line line-dashed b-b line-lg " ng-show='appSetting.showCaptcha'></div>
-                    <div class="form-group fade-in" ng-show='appSetting.showCaptcha'>
+                    <div class="line line-dashed b-b line-lg " ng-show='setting.showCaptcha'></div>
+                    <div class="form-group fade-in" ng-show='setting.showCaptcha'>
                         <label class="col-sm-5 control-label">只在异常登录情况下输入</label>
                         <div class="col-sm-7">
                             <label class="i-switch bg-primary m-t-xs m-r"> <input
                                     type="checkbox"
-                                    ng-checked="appSetting.showCaptchaOnError"
-                                    ng-model="appSetting.showCaptchaOnError"> <i></i>
+                                    ng-checked="setting.showCaptchaOnError"
+                                    ng-model="setting.showCaptchaOnError"> <i></i>
                             </label>
                         </div>
                     </div>
-                    <div class="line line-dashed b-b line-lg " ng-show='appSetting.showCaptcha'></div>
-                    <div class="form-group fade-in" ng-show='appSetting.showCaptcha'>
+                    <div class="line line-dashed b-b line-lg " ng-show='setting.showCaptcha'></div>
+                    <div class="form-group fade-in" ng-show='setting.showCaptcha'>
                         <label class="col-sm-5 control-label">验证码长度</label>
                         <div class="col-sm-7">
                             <input type="number" min="4" max="8" class="form-control" required style="width: 100px"
-                                   ng-model="appSetting.captchaLength"> <span
+                                   ng-model="setting.captchaLength"> <span
                                 class="help-block m-b-none">生成验证码长度，最短长度4位，最长为8位</span>
                         </div>
                     </div>
@@ -68,7 +68,7 @@
                         <div class="col-sm-7">
                             <input type="text" ng-minLength="4" maxlength="20" class="form-control"
                                    style="width: 150px"
-                                   ng-model="appSetting.defaultPassword"> <span
+                                   ng-model="setting.defaultPassword"> <span
                                 class="help-block m-b-none">控制台添加用户默认的密码，用户第一次登录需要修改密码，最短4位，最长20位</span>
                         </div>
                     </div>
@@ -78,7 +78,7 @@
                         <div class="col-sm-7">
                             <input type="number" min="4" class="form-control"
                                    style="width: 100px"
-                                   ng-model="appSetting.minLengthOfPassword"> <span
+                                   ng-model="setting.minLengthOfPassword"> <span
                                 class="help-block m-b-none">限制用户密码的最短长度，最短长度4位</span>
                         </div>
                     </div>
@@ -88,48 +88,48 @@
                         <div class="col-sm-7">
                             <label class="checkbox-inline i-checks">
                                 <input type="radio" name="passwordStrength" value="1"
-                                       ng-checked="appSetting.passwordStrength == 1"
-                                       ng-model="appSetting.passwordStrength"><i></i>
+                                       ng-checked="setting.passwordStrength == 1"
+                                       ng-model="setting.passwordStrength"><i></i>
                                 弱
                             </label>
                             <label class="checkbox-inline i-checks">
                                 <input type="radio" name="passwordStrength" value="2"
-                                       ng-checked="appSetting.passwordStrength == 2"
-                                       ng-model="appSetting.passwordStrength"><i></i>
+                                       ng-checked="setting.passwordStrength == 2"
+                                       ng-model="setting.passwordStrength"><i></i>
                                 普通
                             </label>
                             <label class="checkbox-inline i-checks">
                                 <input type="radio" name="passwordStrength" value="3"
-                                       ng-checked="appSetting.passwordStrength == 3"
-                                       ng-model="appSetting.passwordStrength"><i></i>
+                                       ng-checked="setting.passwordStrength == 3"
+                                       ng-model="setting.passwordStrength"><i></i>
                                 中等
                             </label>
                             <label class="checkbox-inline i-checks">
                                 <input type="radio" name="passwordStrength" value="4"
-                                       ng-checked="appSetting.passwordStrength == 4"
-                                       ng-model="appSetting.passwordStrength"><i></i>
+                                       ng-checked="setting.passwordStrength == 4"
+                                       ng-model="setting.passwordStrength"><i></i>
                                 强
                             </label>
                             <div
-                                    ng-show="appSetting.passwordStrength ==1"
+                                    ng-show="setting.passwordStrength ==1"
                                     class="alert alert-info"
                                     style="margin-bottom: 0px; margin-top: 10px; width: 400px;"
                                     role="alert">任意密码，只要求限制密码长度
                             </div>
                             <div
-                                    ng-show="appSetting.passwordStrength == 2"
+                                    ng-show="setting.passwordStrength == 2"
                                     class="alert alert-info"
                                     style="margin-bottom: 0px; margin-top: 10px; width: 400px;"
                                     role="alert">密码必须为数字和字母组合
                             </div>
                             <div
-                                    ng-show="appSetting.passwordStrength == 3"
+                                    ng-show="setting.passwordStrength == 3"
                                     class="alert alert-info"
                                     style="margin-bottom: 0px; margin-top: 10px; width: 400px;"
                                     role="alert">密码必须为数字和字母组合，且必须含有大小写字母
                             </div>
                             <div
-                                    ng-show="appSetting.passwordStrength == 4"
+                                    ng-show="setting.passwordStrength == 4"
                                     class="alert alert-info"
                                     style="margin-bottom: 0px; margin-top: 10px; width: 400px;"
                                     role="alert">密码必须为数字和字母组合，且必须含有大小写字母和特殊字符
@@ -144,11 +144,11 @@
                     <div class="form-group">
                         <label class="col-sm-5 control-label">文件大小限制</label>
                         <div class="col-sm-7">
-                            <input type="number" ng-model="appSetting.maxUploadFileSize"
+                            <input type="number" ng-model="setting.maxUploadFileSize"
                                    min="0" class="form-control"
                                    style="width: 100px; display: inline;"/> MB
                             <div
-                                    ng-show="(appSetting.maxUploadFileSize > 2048)"
+                                    ng-show="(setting.maxUploadFileSize > 2048)"
                                     class="alert alert-danger"
                                     style="margin-bottom: 0px; margin-top: 5px; width: 200px;"
                                     role="alert">最大限制不能超过2G
@@ -159,12 +159,12 @@
                     <div class="form-group">
                         <label class="col-sm-5 control-label">文件分片大小</label>
                         <div class="col-sm-7">
-                            <input type="number" ng-model="appSetting.multiPartSize"
+                            <input type="number" ng-model="setting.multiPartSize"
                                    min="0" class="form-control"
                                    style="width: 100px; display: inline;"/> MB
                             <span class="help-block m-b-none">设置断点续传文件分片大小</span>
                             <div
-                                    ng-show="(appSetting.multiPartSize > 50)"
+                                    ng-show="(setting.multiPartSize > 50)"
                                     class="alert alert-danger"
                                     style="margin-bottom: 0px; margin-top: 5px; width: 200px;"
                                     role="alert">最大限制不能超过50MB
@@ -176,7 +176,7 @@
                         <label class="col-sm-5 control-label">允许上传的文件后缀</label>
                         <div class="col-sm-7">
                             <input type="text" class="form-control" style="width: 300px"
-                                   ng-model="appSetting.includeExtensions">
+                                   ng-model="setting.includeExtensions">
                             <span class="help-block m-b-none">填写文件后缀，多个后缀使用“;”进行连接，例如：doc;docx;xls</span>
                         </div>
                     </div>
@@ -185,7 +185,7 @@
                         <label class="col-sm-5 control-label">禁止上传的文件后缀</label>
                         <div class="col-sm-7">
                             <input type="text" class="form-control" style="width: 300px"
-                                   ng-model="appSetting.excludeExtensions"> <span
+                                   ng-model="setting.excludeExtensions"> <span
                                 class="help-block m-b-none">填写文件后缀，多个后缀使用“;”进行连接，例如:exe;bat</span>
                         </div>
                     </div>
@@ -194,7 +194,7 @@
                         <label class="col-sm-5 control-label">允许上传的文件类型</label>
                         <div class="col-sm-7">
                             <textarea rows="6" class="form-control" style="width: 300px"
-                                      ng-model="appSetting.includeContentTypes">
+                                      ng-model="setting.includeContentTypes">
                             </textarea>
                             <span class="help-block m-b-none">填写文件类型，多个类型请换行填写</span>
                         </div>
@@ -204,7 +204,7 @@
                         <label class="col-sm-5 control-label">禁止上传的文件类型</label>
                         <div class="col-sm-7">
                             <textarea rows="6" class="form-control" style="width: 300px"
-                                      ng-model="appSetting.excludeContentTypes">
+                                      ng-model="setting.excludeContentTypes">
                             </textarea>
                             <span class="help-block m-b-none">填写文件类型，多个类型请换行填写</span>
                         </div>
@@ -218,14 +218,14 @@
                                             <label class="col-sm-5 control-label">文件加密存储</label>
                                             <div class="col-sm-7">
                                                 <label class="i-switch bg-primary m-t-xs m-r"> <input
-                                                    type="checkbox" ng-checked="appSetting.enableEncrypt"
-                                                    ng-model="appSetting.enableEncrypt"> <i></i>
+                                                    type="checkbox" ng-checked="setting.enableEncrypt"
+                                                    ng-model="setting.enableEncrypt"> <i></i>
                                                 </label>
                                             </div>
                                         </div>
-                                         <div class="line line-dashed b-b line-lg " ng-show="appSetting.enableEncrypt"></div>
+                                         <div class="line line-dashed b-b line-lg " ng-show="setting.enableEncrypt"></div>
                                         <div class="form-group"
-                                            ng-show="appSetting.enableEncrypt">
+                                            ng-show="setting.enableEncrypt">
                                             <label class="col-sm-5 control-label">加密密钥</label>
                                             <div class="col-sm-7">
                                                 <input type="text" class="form-control" style="width: 200px">
@@ -237,13 +237,13 @@
                         <label class="col-sm-5 control-label">开启水印</label>
                         <div class="col-sm-7">
                             <label class="i-switch bg-primary m-t-xs m-r"> <input
-                                    type="checkbox" ng-checked="appSetting.enableWatermark"
-                                    ng-model="appSetting.enableWatermark"> <i></i>
+                                    type="checkbox" ng-checked="setting.enableWatermark"
+                                    ng-model="setting.enableWatermark"> <i></i>
                             </label>
                         </div>
                     </div>
-                    <div class="line line-dashed b-b line-lg hidden" ng-show="appSetting.enableWatermark"></div>
-                    <div class="form-group " ng-show="appSetting.enableWatermark">
+                    <div class="line line-dashed b-b line-lg hidden" ng-show="setting.enableWatermark"></div>
+                    <div class="form-group " ng-show="setting.enableWatermark">
                         <label class="col-sm-5 control-label">水印内容</label>
                         <div class="col-sm-7">
                             <label class="checkbox-inline i-checks"> <input

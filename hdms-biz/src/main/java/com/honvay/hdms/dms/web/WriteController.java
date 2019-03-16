@@ -1,3 +1,4 @@
+/*   Copyright (c) 2019. 本项目所有源码受中华人民共和国著作权法保护，已登记软件著作权。 *     本项目版权归南昌瀚为云科技有限公司所有，本项目仅供学习交流使用，未经许可不得进行商用，开源（社区版）遵守AGPL-3.0协议。 * */
 package com.honvay.hdms.dms.web;
 
 import com.honvay.hdms.auth.core.AuthenticatedUser;
@@ -32,6 +33,7 @@ public class WriteController extends BaseController {
 
 	/**
 	 * 创建文件夹
+	 *
 	 * @param request
 	 * @param authenticatedUser
 	 * @return
@@ -47,6 +49,7 @@ public class WriteController extends BaseController {
 
 	/**
 	 * 复制文件
+	 *
 	 * @param request
 	 * @param authenticatedUser
 	 * @return
@@ -61,6 +64,7 @@ public class WriteController extends BaseController {
 
 	/**
 	 * 移动文件
+	 *
 	 * @param request
 	 * @param authenticatedUser
 	 * @return
@@ -82,6 +86,7 @@ public class WriteController extends BaseController {
 
 	/**
 	 * 设置标签
+	 *
 	 * @param request
 	 * @param authenticatedUser
 	 * @return
@@ -96,6 +101,7 @@ public class WriteController extends BaseController {
 
 	/**
 	 * 修改备注
+	 *
 	 * @param request
 	 * @param authenticatedUser
 	 * @return
@@ -110,6 +116,7 @@ public class WriteController extends BaseController {
 
 	/**
 	 * 删除文件
+	 *
 	 * @param request
 	 * @param user
 	 * @return
@@ -125,6 +132,7 @@ public class WriteController extends BaseController {
 
 	/**
 	 * 锁定文件
+	 *
 	 * @param request
 	 * @param user
 	 * @return
@@ -140,6 +148,7 @@ public class WriteController extends BaseController {
 
 	/**
 	 * 解锁文件
+	 *
 	 * @param request
 	 * @param user
 	 * @return
@@ -155,6 +164,7 @@ public class WriteController extends BaseController {
 
 	/**
 	 * 重命名文件
+	 *
 	 * @param request
 	 * @param user
 	 * @return

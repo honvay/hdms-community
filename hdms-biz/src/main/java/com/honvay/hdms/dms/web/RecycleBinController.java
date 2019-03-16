@@ -1,3 +1,4 @@
+/*   Copyright (c) 2019. 本项目所有源码受中华人民共和国著作权法保护，已登记软件著作权。 *     本项目版权归南昌瀚为云科技有限公司所有，本项目仅供学习交流使用，未经许可不得进行商用，开源（社区版）遵守AGPL-3.0协议。 * */
 package com.honvay.hdms.dms.web;
 
 import com.honvay.hdms.auth.core.AuthenticatedUser;
@@ -41,7 +42,7 @@ public class RecycleBinController extends BaseController {
 
 	@RequestMapping("/list")
 	public Result<List<DocumentFullDto>> recycle(@AuthenticationPrincipal AuthenticatedUser authenticatedUser) {
-		Set<String> paths = authorizeService.findPathsByOwner(authenticatedUser,PermissionType.REMOVE);
+		Set<String> paths = authorizeService.findPathsByOwner(authenticatedUser, PermissionType.REMOVE);
 		return this.success(this.documentReadService.findDeletedDocument(paths, authenticatedUser.getUserMount().getId(), authenticatedUser.getOrganizationMount().getId()));
 	}
 
@@ -64,7 +65,7 @@ public class RecycleBinController extends BaseController {
 
 	@RequestMapping("/clear")
 	public Result<String> clear(@AuthenticationPrincipal AuthenticatedUser authenticatedUser) {
-		Set<String> paths = authorizeService.findPathsByOwner(authenticatedUser,PermissionType.REMOVE);
+		Set<String> paths = authorizeService.findPathsByOwner(authenticatedUser, PermissionType.REMOVE);
 		List<DocumentFullDto> documents = this.documentReadService.findDeletedDocument(paths, authenticatedUser.getUserMount().getId(), authenticatedUser.getOrganizationMount().getId());
 		List<Integer> documentIds = documents.stream().map(DocumentFullDto::getId).collect(Collectors.toList());
 		DeleteRequest deleteRequest = new DeleteRequest();

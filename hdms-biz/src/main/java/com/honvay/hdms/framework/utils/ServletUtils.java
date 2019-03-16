@@ -1,10 +1,11 @@
 /**
  * Copyright (c) 2005-2010 springside.org.cn
- *
+ * <p>
  * Licensed under the Apache License, Version 2.0 (the "License");
- * 
+ * <p>
  * $Id: ServletUtils.java 1211 2010-09-10 16:20:45Z calvinxiu $
  */
+/*   Copyright (c) 2019. 本项目所有源码受中华人民共和国著作权法保护，已登记软件著作权。 *     本项目版权归南昌瀚为云科技有限公司所有，本项目仅供学习交流使用，未经许可不得进行商用，开源（社区版）遵守AGPL-3.0协议。 * */
 package com.honvay.hdms.framework.utils;
 
 import org.springframework.util.Assert;
@@ -20,7 +21,7 @@ import java.util.TreeMap;
 
 /**
  * Http与Servlet工具类.
- * 
+ *
  * @author calvin
  */
 public class ServletUtils {
@@ -76,13 +77,13 @@ public class ServletUtils {
 
 	/**
 	 * 根据浏览器If-Modified-Since Header, 计算文件是否已被修改.
-	 * 
+	 *
 	 * 如果无修改, checkIfModify返回false ,设置304 not modify status.
-	 * 
+	 *
 	 * @param lastModified 内容的最后修改时间.
 	 */
 	public static boolean checkIfModifiedSince(HttpServletRequest request, HttpServletResponse response,
-			long lastModified) {
+											   long lastModified) {
 		long ifModifiedSince = request.getDateHeader("If-Modified-Since");
 		if ((ifModifiedSince != -1) && (lastModified < ifModifiedSince + 1000)) {
 			response.setStatus(HttpServletResponse.SC_NOT_MODIFIED);
@@ -93,9 +94,9 @@ public class ServletUtils {
 
 	/**
 	 * 根据浏览器 If-None-Match Header, 计算Etag是否已无效.
-	 * 
+	 *
 	 * 如果Etag有效, checkIfNoneMatch返回false, 设置304 not modify status.
-	 * 
+	 *
 	 * @param etag 内容的ETag.
 	 */
 	public static boolean checkIfNoneMatchEtag(HttpServletRequest request, HttpServletResponse response, String etag) {
@@ -126,7 +127,7 @@ public class ServletUtils {
 
 	/**
 	 * 设置让浏览器弹出下载对话框的Header.
-	 * 
+	 *
 	 * @param fileName 下载后的文件名.
 	 */
 	public static void setFileDownloadHeader(HttpServletResponse response, String fileName) {
@@ -140,7 +141,7 @@ public class ServletUtils {
 
 	/**
 	 * 取得带相同前缀的Request Parameters.
-	 * 
+	 *
 	 * 返回的结果的Parameter名已去除前缀.
 	 */
 	public static Map<String, Object> getParametersStartingWith(ServletRequest request, String prefix) {

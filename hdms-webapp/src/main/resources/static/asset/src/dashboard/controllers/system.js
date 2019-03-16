@@ -57,7 +57,7 @@ dashboard.controller('SettingCtrl', ['$scope', '$http', '$state', '$rootScope', 
     };
 
     function load() {
-        $http.get("/appSetting").success(
+        $http.get("/setting").success(
             function (result, status, headers, config) {
                 if (result.success) {
                     processSetting(result.data);
@@ -95,7 +95,7 @@ dashboard.controller('SettingCtrl', ['$scope', '$http', '$state', '$rootScope', 
                 $scope.setting.watermarkProperties += key + ";";
             }
         });
-        $http.post("/appSetting", $scope.setting).success(
+        $http.post("/setting", $scope.setting).success(
             function (result, status, headers, config) {
                 if (result.success) {
                     $scope.securitySettingForm.$setPristine();

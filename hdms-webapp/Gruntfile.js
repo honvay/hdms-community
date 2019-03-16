@@ -76,7 +76,7 @@ module.exports = function (grunt) {
                 dest: 'build/css/basic.css'
             },
             app: {
-                src: ['<%=asset%>/src/app/app.main.js','<%=asset%>/src/app/app.config.js', '<%=asset%>/src/app/controllers/*.js', '<%=asset%>/src/app/services/*.js'],
+                src: ['<%=asset%>/src/app/app.main.js', '<%=asset%>/src/app/app.config.js', '<%=asset%>/src/app/controllers/*.js', '<%=asset%>/src/app/services/*.js'],
                 dest: 'build/js/app.js'
             },
             dashboard: {

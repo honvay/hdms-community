@@ -4,9 +4,10 @@ body {
     overflow-x: auto;
 }
 
-.app-content, .app-footer, .navbar-collapse{
+.app-content, .app-footer, .navbar-collapse {
     margin-left: 0px;
 }
+
 .preload {
     position: absolute;
     top: 0px;
@@ -747,6 +748,6 @@ body {
     width: 300px;
 }
 
-.CodeMirror{
+.CodeMirror {
     height: inherit;
 }

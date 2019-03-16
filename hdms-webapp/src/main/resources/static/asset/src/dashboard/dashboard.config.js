@@ -51,16 +51,13 @@ dashboard.run(
                 }).state('security.activity', {
                 url: '/activity',
                 templateUrl: 'asset/tpl/dashboard/security/activity.html'
-            }).state('security.permission', {
-                url: '/permission',
-                templateUrl: 'asset/tpl/dashboard/security/permission.html'
             }).state('sys', {
                 abstract: true,
                 url: '/sys',
                 template: '<div ui-view class="app-view"></div>'
             }).state('sys.setting', {
-                url: '/appSetting',
-                templateUrl: 'asset/tpl/dashboard/system/appSetting.html'
+                url: '/setting',
+                templateUrl: 'asset/tpl/dashboard/system/setting.html'
             }).state('sys.task', {
                 url: '/task',
                 templateUrl: 'asset/tpl/dashboard/system/task.html'

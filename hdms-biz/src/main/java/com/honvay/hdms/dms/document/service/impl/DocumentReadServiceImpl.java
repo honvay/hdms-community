@@ -1,7 +1,7 @@
+/*   Copyright (c) 2019. 本项目所有源码受中华人民共和国著作权法保护，已登记软件著作权。 *     本项目版权归南昌瀚为云科技有限公司所有，本项目仅供学习交流使用，未经许可不得进行商用，开源（社区版）遵守AGPL-3.0协议。 * */
 package com.honvay.hdms.dms.document.service.impl;
 
 import com.baomidou.mybatisplus.extension.plugins.pagination.Page;
-import com.honvay.hdms.auth.core.AuthenticatedUser;
 import com.honvay.hdms.dms.document.entity.Document;
 import com.honvay.hdms.dms.document.repository.DocumentRepository;
 import com.honvay.hdms.dms.document.service.DocumentReadService;
@@ -52,7 +52,7 @@ public class DocumentReadServiceImpl implements DocumentReadService {
 	@Override
 	public List<DocumentFullDto> findDeletedDocument(Set<String> paths, Integer userId, Integer departmentId) {
 		//TODO 处理回收站权限
-		return this.documentRepository.findDeletedDocument(paths.stream().map(path -> path + "%").collect(Collectors.toSet()),userId,departmentId);
+		return this.documentRepository.findDeletedDocument(paths.stream().map(path -> path + "%").collect(Collectors.toSet()), userId, departmentId);
 	}
 
 	@Override

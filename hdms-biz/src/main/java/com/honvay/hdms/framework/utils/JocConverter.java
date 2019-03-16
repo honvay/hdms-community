@@ -1,3 +1,4 @@
+/*   Copyright (c) 2019. 本项目所有源码受中华人民共和国著作权法保护，已登记软件著作权。 *     本项目版权归南昌瀚为云科技有限公司所有，本项目仅供学习交流使用，未经许可不得进行商用，开源（社区版）遵守AGPL-3.0协议。 * */
 package com.honvay.hdms.framework.utils;
 
 import org.apache.poi.hssf.usermodel.HSSFPrintSetup;
@@ -19,13 +20,10 @@ public class JocConverter {
 
 	/**
 	 * 将Office文档转换为PDF. 运行该函数需要用到OpenOffice, OpenOffice
-	 * 
-	 * @param sourceFile
-	 *            源文件,绝对路径. 可以是Office2003-2007全部格式的文档, Office2010的没测试. 包括.doc,
-	 *            .docx, .xls, .xlsx, .ppt, .pptx等.
-	 * 
-	 * @param destFile
-	 *            目标文件.绝对路径.
+	 *
+	 * @param sourceFile 源文件,绝对路径. 可以是Office2003-2007全部格式的文档, Office2010的没测试. 包括.doc,
+	 *                   .docx, .xls, .xlsx, .ppt, .pptx等.
+	 * @param destFile   目标文件.绝对路径.
 	 * @throws OfficeException
 	 */
 	public static void word2pdf(String inputFilePath) throws OfficeException {
@@ -85,7 +83,7 @@ public class JocConverter {
 
 		officeManager.stop();
 	}
-	
+
 	public static void visio2pdf(String inputFilePath) throws OfficeException {
 
 		DefaultOfficeManagerBuilder builder = new DefaultOfficeManagerBuilder();
@@ -175,19 +173,19 @@ public class JocConverter {
 		}
 		officeManager.stop();
 	}
-	
-	public static void convert(String path) throws Exception{
-		if(path.endsWith(".doc") || path.endsWith(".docx")){
+
+	public static void convert(String path) throws Exception {
+		if (path.endsWith(".doc") || path.endsWith(".docx")) {
 			word2pdf(path);
-		}else if(path.endsWith(".xls") || path.endsWith(".xlsx")){
+		} else if (path.endsWith(".xls") || path.endsWith(".xlsx")) {
 			excel2pdf(path);
-		}else if(path.endsWith(".ppt") || path.endsWith(".pptx")){
+		} else if (path.endsWith(".ppt") || path.endsWith(".pptx")) {
 			ppt2pdf(path);
-		}else if(path.endsWith(".vsd") || path.endsWith(".vsdx")){
+		} else if (path.endsWith(".vsd") || path.endsWith(".vsdx")) {
 			visio2pdf(path);
 		}
 	}
-	
+
 	public static void txt2pdf(String inputFilePath) throws OfficeException {
 
 		DefaultOfficeManagerBuilder builder = new DefaultOfficeManagerBuilder();
@@ -212,7 +210,7 @@ public class JocConverter {
 
 		officeManager.stop();
 	}
-	
+
 	public static void multiple(String... inputFilePaths) throws OfficeException {
 
 		DefaultOfficeManagerBuilder builder = new DefaultOfficeManagerBuilder();
