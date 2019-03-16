@@ -1,0 +1,89 @@
+<div class="m-c">
+	<div class="modal-header">
+		<!-- <button type="button" class="close" ng-click="close();">
+			<span aria-hidden="true">×</span>
+		</button> -->
+		<div class="pull-right col-sm-6 no-padder">
+			<div class="input-group">
+		          <input type="text" class="form-control" ng-model="condition.name" placeholder="搜索">
+		          <div class="input-group-btn" dropdown is-open="isopen">
+		          	 <button type="button" class="btn btn-default dropdown-toggle"  dropdown-toggle >
+		          	 	<span ng-if="!condition.permission">全部</span>
+		          	 	<span ng-if="condition.permission">{{condition.permission.name}}</span>
+		          	 	<span class="caret"></span>
+		          	 </button>
+			         	<ul class="dropdown-menu dropdown-menu-right">
+			         	  <li ng-click="changeConditionPermission()"><a href="#">全部</a></li>
+			              <li ng-click="changeConditionPermission(permission)" ng-repeat="permission in permissions"><a href="#">{{permission.name}}</a></li>
+			            </ul>
+		            </div>
+		        </div>
+		</div>
+		<h4 class="modal-title" style="line-height: 34px;">
+			<i class="fa fa-users"></i>
+			协作者
+		</h4>
+	</div>
+	<div class="modal-body no-padder">
+		<div class="permission-body wrapper-xs" ng-click="current = null">
+		 	 <div class="row m-n">
+		 	 	<div class="col-md-3 permission-item wrapper-sm hover-bg" ng-class="{'active':current == authorize}" ng-repeat="authorize in authorizes | filter:{name:condition.name,permission:condition.permission.id,ownerType:2}" ng-click="select(authorize,$event)">
+					<button type="button" class="close" ng-click="remove(authorize,$event)">
+						<span aria-hidden="true">×</span>
+					</button>
+					<img src="asset/img/group.png" class="img-circle pull-left" style="height:40px;" alt="...">
+					<div class="inline">
+						<div class="m-l-sm" style="line-height: 25px;">{{authorize.name}}</div>
+						<div class="m-l-sm" style="line-height: 10px;font-size:12px;color:#bbb;">
+							{{authorize.permissionName}}<span ng-if="authorize.inherited">(继承)</span>
+						</div>
+					</div>
+				</div>
+			</div>
+			<div class="row m-r-none m-l-none m-t-xs">
+		 	 	<div class="col-md-3 permission-item wrapper-sm hover-bg" ng-class="{'active':current == authorize}" ng-repeat="authorize in authorizes | filter:{name:condition.name,permission:condition.permission.id,ownerType:1} " ng-click="select(authorize,$event)">
+					<button type="button" class="close" ng-click="remove(authorize,$event)">
+						<span aria-hidden="true">×</span>
+					</button>
+					<img ng-src="{{user.avatar | resource}}" class="img-circle pull-left" style="height:40px;" alt="...">
+					<div class="inline">
+						<div class="m-l-sm" style="line-height: 25px;">{{authorize.name}}</div>
+						<div class="m-l-sm" style="line-height: 10px;font-size:12px;color:#bbb;">
+							{{authorize.permissionName}}<span ng-if="authorize.inherited">(继承)</span>
+						</div>
+					</div>
+				</div>
+			</div>
+		 	 <div class="col-sm-12 permission-user-part" ng-show="loading">
+				<div class="wrapper-xl text-center" >
+					<img ng-src="{{'asset/img/loading.gif' | resource}}" />
+					<p class="m-t-sm">正在加载</p>
+				</div>
+			</div>
+			<div class="col-sm-12" ng-show="authorizes.length == 0">
+		    	<div class="wrapper-xs text-center" >
+                    <i class="iconfont icon-empty" style="font-size: 150pt"></i>
+					<p class="m-t-sm">没有配置权限</p>
+				</div>
+			</div>
+           </div>
+           <div class="modal-footer text-left">
+           <div class="col-sm-4 no-padder">
+           	<div class="input-group">
+				<span class="input-group-addon" >权限</span>
+			    <select class="form-control wrapper-xs" ng-model="permissionId" ng-change="update(current)" ng-disabled="!current">
+					<option ng-repeat="(k,v) in permissionMap" value="{{k}}" ng-selected="k == current.permissionId">{{v}}</option>
+				</select>
+		     </div>
+		     </div>
+			<div class="pull-right">
+				<button class="btn btn-primary " ng-click="add()">
+	           		<i class="fa fa-user"></i> 添加
+	           	</button>
+	           	<button class="btn btn-default " ng-click="close()">
+	           		关闭
+	           	</button>
+			</div>
+		</div>
+	</div>
+</div>

@@ -1,0 +1,28 @@
+<div class="m-c">
+	<div class="modal-header">
+		<h4 class="modal-title">{{operation}} [{{user.name}}] 到</h4>
+	</div>
+	<div class="modal-body wrapper-lg">
+		<div class="row">
+			<div class="col-sm-12">
+				<form name="departmentMoveForm" class="form-horizontal form-validation">
+					<div class="form-group">
+						<label class="col-sm-3 control-label">所属部门：</label>
+						<div class="col-sm-9">
+							<hc-combo-tree  ng-model="department" tree-config="treeConfig" on-change="onChange(node);">
+						</div>
+					</div>
+					<div class="form-group m-b-none" ng-show="result" >
+						<div class="col-sm-12 m-t-md text-center">
+							<div class="alert alert-danger m-b-none" role="alert">{{result.message}}</div>
+						</div>
+					</div>
+				</form>
+			</div>
+		</div>
+	</div>
+	<div class="modal-footer" style="text-align: right;">
+		<button type="button" class="btn btn-primary" ng-click="save()"  ng-disabled="(!changed)">确定</button>
+		<button type="button" class="btn btn-minor" ng-click="cancel()">取消</button>
+	</div>
+</div>

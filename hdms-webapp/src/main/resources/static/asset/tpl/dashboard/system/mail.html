@@ -1,0 +1,41 @@
+<div ng-controller="MailSettingCtrl"  class="app-ctrl">
+<div class="bg-light lter b-b wrapper-md app-title-fixed">
+<div class="row">
+        <div class="col-sm-6 col-xs-6">
+          <h1 class="m-n font-thin h3" style="line-height: 34px;">邮件服务器</h1>
+        </div>
+        <div class="col-sm-6 col-xs-6" style="text-align: right;">
+          <button class="btn btn-primary" ng-disabled="settingForm.$invalid || !settingForm.$dirty" ng-click="save()">保存</button>
+          <button class="btn btn-minor" ng-disabled="!settingForm.$dirty" ng-click="reset()">重置</button>
+        </div>
+      </div>
+</div>
+<div class="wrapper-md">
+	<div class="panel panel-default">
+		<div class="panel-heading font-bold">配置</div>
+		<div class="panel-body">
+			<form name="settingForm" class="form-horizontal form-property" method="get">
+				<div class="form-group">
+					<label class="col-sm-5 control-label">邮件服务器</label>
+					<div class="col-sm-7">
+						<input type="text" ng-model='appSetting.host' required="required" class="form-control">
+					</div>
+				</div>
+				<div class="line line-dashed b-b line-lg "></div>
+				<div class="form-group">
+					<label class="col-sm-5 control-label">账号</label>
+					<div class="col-sm-7">
+						<input type="email" ng-model='appSetting.username' required="required" class="form-control">
+					</div>
+				</div>
+				<div class="line line-dashed b-b line-lg "></div>
+				<div class="form-group">
+					<label class="col-sm-5 control-label">密码</label>
+					<div class="col-sm-7">
+						<input type="text" ng-model='appSetting.password' required="required" class="form-control">
+					</div>
+				</div>
+			</form>
+		</div>
+	</div>
+</div>

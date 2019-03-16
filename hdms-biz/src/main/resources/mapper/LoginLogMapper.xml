@@ -1,0 +1,53 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper namespace="com.honvay.hdms.login.mapper.LoginLogMapper">
+
+    <resultMap id="loginLogDto" type="com.honvay.hdms.login.model.LoginLogDto">
+        <id property="id" jdbcType="INTEGER" column="id"/>
+        <result property="loginDate" jdbcType="TIMESTAMP" column="login_date"/>
+        <result property="userAgent" jdbcType="VARCHAR" column="user_agent"/>
+        <result property="client" jdbcType="VARCHAR" column="client"/>
+        <result property="loginIp" jdbcType="VARCHAR" column="login_ip"/>
+        <result property="userId" jdbcType="INTEGER" column="user_id"/>
+        <result property="username" jdbcType="VARCHAR" column="username"/>
+        <result property="name" jdbcType="VARCHAR" column="name"/>
+    </resultMap>
+
+    <sql id="searchCondition">
+        <if test="query.startDate != null">
+            and t.login_date between #{query.startDate} and #{query.endDate}
+        </if>
+        <if test="query.username != null">
+            and user.username = #{query.username}
+        </if>
+        <if test="query.name != null">
+            and user.name = #{query.name}
+        </if>
+    </sql>
+
+    <select id="searchLoginLog" resultMap="loginLogDto">
+        select t.id as id,
+        t.login_date as login_date,
+        t.user_agent as user_agent,
+        t.client as client,
+        t.login_ip as login_ip,
+        t.user_id as user_id,
+        user.username as username,
+        user.name as name
+        from hdms_login_log t
+        left join hdms_user user on user.id = t.user_id
+        where 1= 1
+        <include refid="searchCondition"/>
+        order by t.login_date desc
+        limit #{query.start},#{query.end};
+    </select>
+
+    <select id="countLoginLog" resultType="integer">
+        select count(*)
+        from hdms_login_log t
+        left join hdms_user user on user.id = t.user_id
+        where 1 =1
+        <include refid="searchCondition"/>
+    </select>
+
+</mapper>

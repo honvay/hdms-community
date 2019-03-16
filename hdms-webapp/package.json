@@ -1,0 +1,16 @@
+{
+  "name": "Hdms",
+  "version": "0.1.0",
+  "devDependencies": {
+    "grunt": "1.0.1",
+    "grunt-contrib-less": "1.4.1",
+    "grunt-contrib-watch": "1.0.0",
+    "grunt-contrib-concat": "1.0.1",
+    "grunt-contrib-uglify": "3.0.1 ",
+    "grunt-angular-templates": "1.1.0",
+    "grunt-contrib-htmlmin": "2.4.0",
+    "grunt-contrib-jshint": "1.1.0",
+    "grunt-contrib-cssmin": "2.2.0",
+    "grunt-contrib-copy": "^1.0.0"
+  }
+}

@@ -1,0 +1,73 @@
+<div class="m-c">
+	<div class="modal-header">
+		<h4 class="modal-title">权限配置- {{operation}}</h4>
+	</div>
+	<div class="modal-body wrapper-lg">
+		<div class="row">
+			<div class="col-sm-12">
+				<form name="permissionConfigForm" class="form-horizontal form-validation">
+					<div class="form-group">
+						<label class="col-sm-2 control-label">名称</label>
+						<div class="col-sm-10">
+							<input type="text" name="name" ng-model="permission.name" required class="form-control">
+						</div>
+					</div>
+					<div class="form-group">
+						<label class="col-sm-2 control-label">权限</label>
+						<div class="col-sm-10">
+							<label class="checkbox-inline i-checks col-sm-12 m-l-none">
+				              <input type="checkbox" name="isCheckAll" ng-model="isCheckAll" ng-change="checkAll(isCheckAll);"><i></i> 全选
+				            </label>
+							<label class="checkbox-inline i-checks col-sm-4 m-l-none">
+				              <input type="checkbox" name="authorities" ng-model="permissions.view"><i></i> 查看/预览
+				            </label>
+							<label class="checkbox-inline i-checks col-sm-4 m-l-none">
+				              <input type="checkbox" name="authorities" ng-model="permissions.upload" ><i></i> 上传
+				            </label>
+				            <label class="checkbox-inline i-checks col-sm-4 m-l-none">
+				              <input type="checkbox" name="authorities" ng-model="permissions.download"><i></i> 下载
+				            </label>
+				           	<label class="checkbox-inline i-checks col-sm-4 m-l-none">
+				              <input type="checkbox" name="authorities" ng-model="permissions.create" ><i></i> 创建文件夹
+				            </label>
+				            <label class="checkbox-inline i-checks col-sm-4 m-l-none">
+				              <input type="checkbox" name="authorities" ng-model="permissions.move" ><i></i> 移动
+				            </label>
+				            <label class="checkbox-inline i-checks col-sm-4 m-l-none">
+				              <input type="checkbox" name="authorities" ng-model="permissions.copy" ><i></i> 复制
+				            </label>
+				            <label class="checkbox-inline i-checks col-sm-4 m-l-none">
+				              <input type="checkbox" name="authorities" ng-model="permissions.lock" ><i></i> 锁定/解锁
+				            </label>
+				            <label class="checkbox-inline i-checks col-sm-4 m-l-none">
+				              <input type="checkbox" name="authorities" ng-model="permissions.remove" ><i></i> 删除/恢复
+				            </label>
+				            <label class="checkbox-inline i-checks col-sm-4 m-l-none">
+				              <input type="checkbox" name="authorities" ng-model="permissions.share" ><i></i> 分享
+				            </label>
+				            <label class="checkbox-inline i-checks col-sm-4 m-l-none">
+				              <input type="checkbox" name="authorities" ng-model="permissions.review" ><i></i> 评论
+				            </label>
+							<label class="checkbox-inline i-checks col-sm-4 m-l-none">
+								<input type="checkbox" name="authorities" ng-model="permissions.edit" ><i></i> 编辑
+							</label>
+						</div>
+					</div>
+					<div class="form-group">
+						<label class="col-sm-2 control-label">描述</label>
+						<div class="col-sm-10">
+							<textarea rows="3" name="extensions" ng-model="permission.description"  class="form-control"></textarea>
+						</div>
+					</div>
+				</form>
+			</div>
+		</div>
+	</div>
+	<div class="modal-footer" style="text-align: right;">
+		<button type="button" class="btn btn-primary" ng-click="save()" ng-disabled="(permissionConfigForm.$invalid || !permissionConfigForm.$dirty || saving)">
+			<span ng-show="saving">正在保存</span>
+			<span ng-show="!saving">保存</span>
+		</button>
+		<button type="button" class="btn btn-default" ng-click="cancel()">取消</button>
+	</div>
+</div>

@@ -1,0 +1,58 @@
+<div class="app-ctrl" style="padding-top:76px;overflow: hidden" ng-show="!error">
+    <div class="b-b app-title-fixed padder">
+        <div class="row wrapper-md bg-light lter">
+            <div class="col-sm-9 col-xs-9 padder-sm">
+          		<span class="m-n directory-header h3">
+          			<i class="glyphicon glyphicon-comment"></i>
+          			消息通知
+          		</span>
+            </div>
+        </div>
+    </div>
+    <div class="bg-white wrapper-md app-inner">
+        <div class="m-b" ng-repeat="message in messages">
+            <a href class="pull-left thumb-sm avatar">
+                <img ng-src="{{message.sender.avatar | resource}}" alt="...">
+                <p class="m-t-xs text-xs text-ellipsis">{{message.sender.name}}</p>
+            </a>
+            <div class="clear">
+                <div class="pos-rlt wrapper-sm b bg-light r m-l-sm message">
+                    <span class="arrow left pull-up arrow-light"></span>
+                    <p class="m-b-xs" ng-if="message.content">
+                        留言：{{message.content}}
+                    </p>
+                    <div class="message-file  pos-rlt " ng-if="message.document">
+                        文件：
+                        <a ng-click="open(message.document)" class="file-box wrapper-sm clearfix pos-rlt b bg-light lter"
+                           href="">
+                            <div class="file-icon text-center">
+                                <img class="" ng-src="{{getIcon(message.document)}}">
+                            </div>
+                            <div class="file-content">
+                                <div class="file-name">{{message.document.name}}</div>
+                                <div class="file-size" ng-if="message.document.size">{{message.document.size | formatSize}}
+                                </div>
+                                <div class="file-size" ng-if="!message.document.size">&nbsp;</div>
+                            </div>
+                        </a>
+                    </div>
+
+                </div>
+                <small class="text-muted m-l-sm message-date"><i class="fa fa-ok text-success"></i>{{message.sendDate}}
+                </small>
+            </div>
+        </div>
+    </div>
+    <div class="wrapper-xl text-center" ng-show="loading">
+        <img ng-src="{{'asset/img/loading.gif' | resource}}"/>
+        <p class="m-t-sm">正在加载</p>
+    </div>
+    <div class="wrapper-xl text-center" ng-show="(files.length == 0 || !files) && !loading">
+        <i class="iconfont icon-empty"></i>
+        <p class="m-t-md">没有未读消息</p>
+    </div>
+</div>
+<div class="wrapper-xl text-center" ng-show="error">
+    <i class="iconfont icon-error"></i>
+    <p class="m-t-md">{{error}}</p>
+</div>

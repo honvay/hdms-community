@@ -1,0 +1,31 @@
+<div class="m-c">
+	<div class="modal-header">
+		<h4 class="modal-title">用户 [{{user.name}}] 配额调整</h4>
+	</div>
+	<div class="modal-body wrapper-lg">
+		<div class="row">
+			<div class="col-sm-12">
+				<form name="userQutaoForm" class="form-horizontal form-validation">
+					<div class="form-group">
+						<label class="col-sm-3 control-label">配额：</label>
+						<div class="col-sm-9">
+							<input type="number" class="form-control w-xs inline" ng-model="user.quota" min="1" /> GB
+						</div>
+					</div>
+					<div class="form-group m-b-none" ng-show="result" >
+						<div class="col-sm-12 m-t-md text-center">
+							<div class="alert alert-danger m-b-none" role="alert">{{result.message}}</div>
+						</div>
+					</div>
+				</form>
+			</div>
+		</div>
+	</div>
+	<div class="modal-footer" style="text-align: right;">
+		<button type="button" class="btn btn-primary" ng-click="save()"  ng-disabled="useQuatoForm.$invalid || !userQutaoForm.$dirty || saving">
+			<span ng-show="!saving">保存</span>
+			<span ng-show="saving">正在保存</span>
+		</button>
+		<button type="button" class="btn btn-default" ng-click="cancel()">取消</button>
+	</div>
+</div>

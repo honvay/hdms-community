@@ -1,0 +1,83 @@
+<div class="m-c">
+	<div class="modal-header">
+		<div class="pull-right col-md-6 no-padder">
+			<div class="input-group">
+		          <input type="text" class="form-control" ng-model="condition" placeholder="搜索:用户名/姓名/拼音">
+		          <div class="input-group-btn">
+		            <button type="button" class="btn btn-default" ng-show="condition" ng-click="clear();">
+		            	<i class="glyphicon glyphicon-remove"></i>
+		            </button>
+		            <button type="button" class="btn btn-default" ng-click="search();">
+						<i class="glyphicon glyphicon-search"></i>
+					</button>
+		          </div>
+		        </div>
+		</div>
+		<h4 class="modal-title" style="line-height: 34px;">
+			<i class="fa fa-user"></i>
+			选择同事
+		</h4>
+		
+	</div>
+	<div class="modal-body no-padder">
+		<div class="permission-user-body" ng-show="!searching">
+			<div class="col-sm-6 permission-user-part b-r wrapper-sm">
+				<hc-tree tree-control="tree" 
+					   load-asyn="true" 
+					   on-init="onTreeInit()"
+					   open-folder-icon="fa fa-users"
+					   folder-icon="fa fa-users"
+					   leaf-icon="fa fa-users"
+					   on-selection-change="loadUser(selection);"
+					   load-url="/department/list"></hc-tree>
+			</div>
+			<div class="col-sm-6 permission-user-part wrapper-sm">
+				<div class="wrapper-xl text-center" ng-show="loading">
+					<img src="asset/img/loading.gif" />
+					<p class="m-t-sm">正在加载</p>
+				</div>
+				<div ng-repeat="user in users" class="wrapper-xs hover-bg" ng-show="!loading" ng-click="select(user);">
+					<img ng-src="{{user.avatar | resource}}" class="img-circle" style="height:30px;" alt="...">
+					<span class="m-l-sm" style="line-height: 30px;">{{user.name}}</span>
+				</div>
+			</div>
+		</div>
+			<div class="permission-user-body wrapper-sm" ng-show="searching">
+				<div class="col-md-4  wrapper-xs hover-bg" ng-repeat="user in result" ng-click="select(user);">
+					<img ng-src="{{user.avatar | resource}}" class="img-circle pull-left"  style="height:50px;" alt="...">
+					<div class="inline">
+						<span class="m-l-sm" style="line-height: 30px;">{{user.name}}</span>
+						<br/>
+						<span class="m-l-sm" style="line-height: 20px;font-size:12px;color:#bbb;">{{user.department.name}}</span>
+					</div>
+				</div>
+			    <div class="col-sm-12" ng-show="result.length == 0">
+			    	<div class="wrapper-xs text-center" >
+						<i class="iconfont icon-empty"></i>
+						<p class="m-t-sm">没有搜索到用户</p>
+					</div>
+				</div>
+				<div class="col-sm-12 permission-user-part" ng-show="loading">
+					<div class="wrapper-xl text-center" >
+					<img ng-src="{{'asset/img/loading.gif' | resource}}" />
+					<p class="m-t-sm">正在加载</p>
+				</div>
+			</div>
+		</div>
+		<div class="wrapper-sm b-t" ng-hide="selected.length == 0">
+			<div class="permission-user-selected wrapper-sm text-center inline hover-bg" ng-repeat="user in selected" >
+				<button type="button" class="close" ng-click="remove(user)">
+					<span aria-hidden="true">×</span>
+				</button>
+				<img ng-src="{{user.avatar | resource}}" class="img-circle" style="height:35px;" alt="...">
+				<div class="text-ellipsis m-t-xs" style="font-size: 12px;">{{user.name}}</div>
+			</div>
+		</div>
+	</div>
+	<div class="modal-footer ">
+		<button type="button" class="btn btn-primary" ng-click="ok()" style="margin-left: 5px;" ng-disabled="selected.length == 0">
+			确定
+		</button>
+		<button type="button" class="btn btn-default" ng-click="close()">取消</button>
+	</div>
+</div>

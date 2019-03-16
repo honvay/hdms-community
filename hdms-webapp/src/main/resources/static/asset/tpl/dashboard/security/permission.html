@@ -1,0 +1,64 @@
+<div ng-controller="PermissionConfigCtrl" class="app-ctrl">
+	<div class="bg-light lter b-b wrapper-md app-title-fixed">
+		<div class="row">
+			<div class="col-sm-6 col-xs-5">
+				<h1 class="m-n font-thin h3" style="line-height: 34px;">权限配置</h1>
+			</div>
+			<div class="col-sm-6 col-xs-7 text-right" >
+				<button class="btn btn-primary" ng-click="add()">新建权限</button>
+			</div>
+		</div>
+	</div>
+	<div class="app-inner bg-light lter">
+				<div class="table-responsive h-full" ng-show="permissions.length > 0 && !loading">
+					<table class="table table-hover b-b">
+						<thead>
+							<tr>
+								<th width="30%">
+									名称
+								</th>
+								<th width="50%">描述 
+								</th>
+								<th  width="20%">操作</th>
+							</tr>
+						</thead>
+						<tbody>
+							<!-- <tr>
+								<th>
+									<input type="text" class="input-sm form-control" placeholder="" ng-model="condition.name">
+								</th>
+								<th>
+									<input type="text" class="input-sm  form-control" placeholder="" ng-model="condition.cronExpression">
+								</th>
+								<th></th>
+							</tr> -->
+							<tr
+								ng-repeat="permission in permissions | filter:{name:condition.name,description:condition.description}"
+								valign="middle">
+								<td>{{permission.name}}</td>
+								<td>{{permission.description}}</td>
+								<td>
+										<i class="fa fa-edit hover text-md m-r-xs" ng-click="edit(permission,$event);" tooltip="编辑"></i>
+										<i class="fa fa-trash hover text-md m-r-xs" ng-click="remove(permission,$event);" tooltip="删除"></i>
+								</td>
+							</tr>
+						</tbody>
+					</table>
+				</div>
+				<div class="wrapper-xl text-center" ng-show="loading">
+			<img ng-src="{{'asset/img/loading.gif' | resource}}"/>
+			<p class="m-t-sm">正在加载</p>
+		</div>
+		<div class="wrapper-xl text-center" ng-show="(permissions.length == 0 || !permissions) && !loading">
+			<i class="iconfont icon-empty"></i>
+			<p class="m-t-md">目前还没有配置权限</p>
+			<button class="btn btn-primary" onclick="add()">
+				<i class="glyphicon glyphicon-plus"></i>新建权限
+			</button>
+		</div>
+			</div>
+			<div class="wrapper-xl text-center" ng-show="error">
+				<i class="iconfont icon-error" ></i>
+				<p class="m-t-md">加载权限失败：{{error}}</p>
+			</div>
+		</div>

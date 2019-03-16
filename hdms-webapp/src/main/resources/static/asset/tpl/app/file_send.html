@@ -1,0 +1,61 @@
+<div class="m-c">
+	<div class="modal-header">
+		<h4 class="modal-title">
+			<i class="fa fa-paper-plane"></i> 发送文件
+		</h4>
+	</div>
+	<div class="modal-body no-padder">
+		<div class="dropbox-list wrapper-sm" >
+			<div class="dropbox-item " ng-repeat="file in files">
+				<div class="dropbox-item-inner wrapper-xs clearfix">
+					<div class="file-name">
+						<img class="file-icon" ng-src="{{getIcon(file)}}" />
+						{{file.name}}
+					</div>
+					<div ng-if="file.size" class="file-size">
+						{{file.size | formatSize}}
+					</div>
+					<div ng-if="!file.size" class="file-size">
+						&nbsp;
+					</div>
+					<div class="file-operation text-center">
+						<i class="fa fa-remove hover" ng-click="remove(file);"></i>
+					</div>
+				</div>
+			</div>
+		</div>
+		<div class="wrapper-sm b-t clearfix">
+		<form class="form-horizontal">
+			<div class="form-group">
+			    <label  class="col-sm-2 control-label">接收人:</label>
+			    <div class="col-sm-10">
+			   		<div class="permission-user-selected wrapper-sm text-center inline hover-bg" ng-repeat="user in users" >
+					<button type="button" class="close" ng-click="removeReceiver(user)">
+						<span aria-hidden="true">×</span>
+					</button>
+					<img ng-src="{{user.avatar | resource}}" class="img-circle" style="height:35px;" alt="...">
+					<div class="text-ellipsis m-t-xs text-sm" >{{user.name}}</div>
+				</div>
+				<div>
+					<button class="btn btn-default btn-md btn-sm m-t-xs" ng-click="addReceiver();">
+						<i class="fa fa-users"></i> 选择接收人
+					</button>
+				</div>
+			    </div>
+			  </div>
+			<div class="form-group">
+			    <label  class="col-sm-2 control-label">留言：</label>
+			    <div class="col-sm-10">
+			   		<input type="text" class="form-control" ng-model="content" />
+			    </div>
+			  </div>
+			  </form>
+		</div>
+	</div>
+	<div class="modal-footer ">
+		<button type="button" class="btn btn-primary" ng-click="ok()" ng-disabled="!users || users.length == 0 || !files || files.length == 0">
+			<i class="fa fa-paper-plane"></i> 发送
+		</button>
+		<button type="button" class="btn btn-default" ng-click="cancel()">取消</button>
+	</div>
+</div>

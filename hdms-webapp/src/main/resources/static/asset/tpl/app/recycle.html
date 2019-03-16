@@ -1,0 +1,166 @@
+<div class="app-ctrl" style="padding-top:90px;overflow: hidden" ng-show="!error">
+    <div class="b-b app-title-fixed padder">
+        <div class="row wrapper-xs b-b bg-light">
+            <div class="col-sm-9 col-xs-9 padder-sm">
+          		<span class="m-n directory-header text-md">
+          			<i class="glyphicon glyphicon-trash"></i>
+          			回收站
+          		</span>
+                <span class="text-sm m-l-xs" ng-show="files.length > 0">
+					( <span ng-show="selection.length > 0">{{selection.length}} / </span>{{files.length}} )
+				</span>
+            </div>
+            <div class="col-sm-3 col-xs-3 padder-sm">
+                <div class="pull-right">
+                    <button class="btn btn-md btn-default" ng-click="switchMode()">
+                        <i class="fa" ng-class="{ true:'fa-list',false:'fa-th'}[mode == 'list']"></i>
+                        <span ng-show="mode == 'list'">列表视图</span>
+                        <span ng-show="mode == 'block'">图标视图</span>
+                    </button>
+                    <div class="btn-group" dropdown is-open="openSortmenu">
+                        <button type="button" class="btn btn-md btn-default" ng-click="changeDesc();">
+                            <i ng-class="{'fa-long-arrow-down' : sortDesc,'fa-long-arrow-up':!sortDesc}" class="fa"></i>
+                            <span ng-show="sortField == 'name'">名称</span>
+                            <span ng-show="sortField == 'size'">大小</span>
+                            <!-- <span ng-show="sortField == 'creationBy.name'">创建者</span> -->
+                            <span ng-show="sortField == 'deleteBy.name'">删除者</span>
+                            <span ng-show="sortField == 'updateDate'">修改时间</span>
+                            <span ng-show="sortField == 'deleteDate'">删除时间</span>
+                        </button>
+                        <button type="button" class="btn btn-md btn-default dropdown-toggle" dropdown-toggle>
+                            <span class="caret"></span>
+                        </button>
+                        <ul class="dropdown-menu" role="menu"
+                            style="left: inherit; right: 0px;">
+                            <li><a href ng-click="changeSort('name')"> 名称 </a></li>
+                            <li><a href ng-click="changeSort('size')"> 大小 </a></li>
+                            <!-- <li><a href ng-click="changeSort('creationBy.name')"> 创建者 </a></li> -->
+                            <li><a href ng-click="changeSort('deleteBy.name')"> 删除者 </a></li>
+                            <li><a href ng-click="changeSort('updateDate')">修改时间 </a></li>
+                            <li><a href ng-click="changeSort('deleteDate')">删除时间 </a></li>
+                        </ul>
+                    </div>
+                </div>
+            </div>
+        </div>
+        <div class="row wrapper-xs bg-light lter">
+            <div class="col-sm-10 col-xs-10 padder-sm">
+                <button class="btn btn-md btn-default" ng-click="revert()" ng-show="selection.length > 0">
+                    <i class="fa fa-recycle"></i> 恢复文件
+                </button>
+                <button class="btn btn-md btn-default" ng-click="openParent(selection[0],$event)"
+                        ng-show="selection.length == 1">
+                    <i class="glyphicon glyphicon-new-window"></i> 打开所在文件夹
+                </button>
+                <button class="btn btn-md btn-default" ng-click="destroy()" ng-show="selection.length > 0">
+                    <i class="fa fa-trash"></i> 彻底删除
+                </button>
+                <button class="btn btn-md btn-default" ng-click="clear()" ng-show="files.length > 0">
+                    <i class="fa fa-trash-o"></i> 清空回收站
+                </button>
+            </div>
+            <div class="col-sm-2 col-xs-2 text-right padder-sm">
+                <div class="input-group-icon directory-search">
+                    <i class="glyphicon glyphicon-search input-icon"></i>
+                    <input type="text" ng-model="condition" class="form-control input-sm rounded" placeholder='搜索"回收站"'>
+                </div>
+            </div>
+        </div>
+    </div>
+    <div class="bg-light lter app-inner" ng-click="onContainerClick();">
+        <div class="table-responsive file-list" ng-if="mode== 'list'" ng-show="files.length > 0 && !loading">
+            <table class="table b-b b-light lter file-table">
+                <thead>
+                <tr>
+                    <th width="5%"><label class="i-checks i-checks-sm m-b-none" ng-show="!condition">
+                        <input type="checkbox" ng-click="selectAll()"
+                               ng-checked="isSelectAll"><i></i>
+                    </label></th>
+                    <th ng-click="changeSort('name')" >名称 <i
+                            ng-show="sortField == 'name'"
+                            ng-class="{'fa-caret-up' : !sortDesc,'fa-caret-down':sortDesc}"
+                            class="fa"> </i>
+                    </th>
+                    <th width="20%">
+                        路径
+                    </th>
+                    <th ng-click="changeSort('size')" width="120px">大小 <i
+                            ng-show="sortField == 'size'"
+                            ng-class="{'fa-caret-up' : !sortDesc,'fa-caret-down':sortDesc}"
+                            class="fa"> </i>
+                    </th>
+                    <th ng-click="changeSort('deleteBy.name')" width="200px">删除者
+                        <i ng-show="sortField == 'deleteBy.name'"
+                           ng-class="{'fa-caret-up' : !sortDesc,'fa-caret-down':sortDesc}"
+                           class="fa"> </i>
+                    </th>
+                    <th ng-click="changeSort('deleteDate')" width="200px">删除时间 <i
+                            ng-show="sortField == 'deleteDate'"
+                            ng-class="{'fa-caret-up' : !sortDesc,'fa-caret-down':sortDesc}"
+                            class="fa"> </i>
+                    </th>
+                </tr>
+                </thead>
+                <tbody>
+                <tr ng-repeat="file in files|orderBy:sortFields:sortDesc | filter:{name:condition}"
+                    class="file-item hc-item"
+                    ng-class="{true:'active'}[file.selected]"
+                    valign="middle"
+                    ng-click="select(file)">
+                    <td width="5%">
+                        <label class="i-checks i-checks-sm m-b-none">
+                            <input type="checkbox" ng-checked="file.selected" ng-click="select(file);"><i></i>
+                        </label>
+                    </td>
+                    <td class="text-ellipsis">
+                        <a ng-click="open(file,$event);">
+                            <div class="file-icon-wrapper">
+                                <img class="file-icon" ng-src="{{getIcon(file)}}"/>
+                            </div>
+                            {{file.name}}
+                        </a>
+                    </td>
+                    <td>
+                        <a ng-click="openParent(file,$event)">
+                            {{file.fullName.split('/').slice(0,-1).join("/")}}
+                        </a>
+                    </td>
+                    <td>{{file.size | formatSize}}</td>
+                    <td>
+                        <img ng-if="file.creationBy" ng-src="{{file.deleteBy.avatar | resource}}" class="img-circle"
+                             style="height:30px;float:left;" alt="...">
+                        <span class="m-l-xs">{{file.deleteBy.name}}</span>
+                    </td>
+                    <td>{{file.deleteDate}}</td>
+                </tr>
+                </tbody>
+            </table>
+        </div>
+        <div ng-if="mode == 'block'">
+            <ul class="file-block-list">
+                <li class="file-block"
+                    ng-class="{true:'active'}[file.selected]"
+                    ng-click="select(file,null,$event)"
+                    ng-dblclick="open(file,$event);"
+                    ng-repeat="file in files|orderBy:sortField:sortDesc | filter:{name:condition}">
+                    <img class="file-icon" ng-src="{{getIcon(file)}}">
+                    <div class="file-name text-ellipsis m-t-sm" tooltip="{{file.name}}" tooltip-placement="bottom">
+                        {{file.name}}
+                    </div>
+                </li>
+            </ul>
+        </div>
+        <div class="wrapper-xl text-center" ng-show="loading">
+            <img ng-src="{{'asset/img/loading.gif' | resource}}"/>
+            <p class="m-t-sm">正在加载</p>
+        </div>
+        <div class="wrapper-xl text-center" ng-show="(files.length == 0 || !files) && !loading">
+            <i class="iconfont icon-empty"></i>
+            <p class="m-t-md">回收站中没有文件</p>
+        </div>
+    </div>
+</div>
+<div class="wrapper-xl text-center" ng-show="error">
+    <i class="iconfont icon-error" ></i>
+    <p class="m-t-md">加载回收站失败：{{error}}</p>
+</div>

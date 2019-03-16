@@ -1,0 +1,195 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper namespace="com.honvay.hdms.dms.activity.mapper.ActivityMapper">
+
+    <resultMap id="documentActivityDto" type="com.honvay.hdms.dms.model.dto.DocumentActivityDto">
+        <id property="id" jdbcType="INTEGER" column="id"/>
+        <result column="operation" jdbcType="VARCHAR" property="operation"/>
+        <result column="operate_date" jdbcType="TIMESTAMP" property="operateDate"/>
+        <result column="content" jdbcType="VARCHAR" property="content"/>
+        <association property="income" javaType="com.honvay.hdms.dms.model.dto.DirectoryMountDto">
+            <result column="income" jdbcType="INTEGER" property="id"/>
+            <result column="income_name" jdbcType="VARCHAR" property="name"/>
+            <result column="income_mount" jdbcType="INTEGER" property="mount"/>
+        </association>
+        <association property="outcome" javaType="com.honvay.hdms.dms.model.dto.DirectoryMountDto">
+            <result column="outcome" jdbcType="INTEGER" property="id"/>
+            <result column="outcome_name" jdbcType="VARCHAR" property="name"/>
+            <result column="outcome_mount" jdbcType="INTEGER" property="mount"/>
+        </association>
+        <association property="change" javaType="com.honvay.hdms.dms.model.dto.DocumentChangeDto">
+            <result column="original_name" jdbcType="INTEGER" property="originalName"/>
+            <result column="current_name" jdbcType="VARCHAR" property="currentName"/>
+        </association>
+        <association property="document" javaType="com.honvay.hdms.dms.model.dto.DocumentSnapshotDto">
+            <result column="document_id" jdbcType="INTEGER" property="id"/>
+            <result column="document_name" jdbcType="VARCHAR" property="name"/>
+        </association>
+        <association property="directory" javaType="com.honvay.hdms.dms.model.dto.DocumentSnapshotDto">
+            <result column="directory_id" jdbcType="INTEGER" property="id"/>
+            <result column="directory_name" jdbcType="VARCHAR" property="name"/>
+            <result column="directory_type" jdbcType="VARCHAR" property="type"/>
+        </association>
+        <association property="operator" javaType="com.honvay.hdms.dms.model.dto.DocumentOperatorDto">
+            <result column="operator_id" jdbcType="INTEGER" property="id"/>
+            <result column="operator_name" jdbcType="VARCHAR" property="name"/>
+            <result column="operator_avatar" jdbcType="VARCHAR" property="avatar"/>
+        </association>
+        <association property="authorize" javaType="com.honvay.hdms.dms.activity.model.AuthorizeActivityDto">
+            <result column="owner" jdbcType="INTEGER" property="owner"/>
+            <result column="owner_type" jdbcType="VARCHAR" property="ownerType"/>
+            <result column="owner_name" jdbcType="VARCHAR" property="ownerName"/>
+            <result column="owner_avatar" jdbcType="VARCHAR" property="ownerAvatar"/>
+            <result column="current_permission" jdbcType="VARCHAR" property="currentPermission"/>
+            <result column="original_permission" jdbcType="VARCHAR" property="originalPermission"/>
+        </association>
+        <association property="description" javaType="com.honvay.hdms.dms.activity.model.DescActivityDto">
+            <result column="current_description" jdbcType="VARCHAR" property="currentDescription"/>
+            <result column="original_description" jdbcType="VARCHAR" property="originalDescription"/>
+        </association>
+        <association property="tags" javaType="com.honvay.hdms.dms.activity.model.TagsActivityDto">
+            <result column="current_tags" jdbcType="VARCHAR" property="currentTags"/>
+            <result column="original_tags" jdbcType="VARCHAR" property="originalTags"/>
+        </association>
+    </resultMap>
+
+    <sql id="searchCondition">
+        <if test="query.startDate != null">
+            and t.operate_date between #{query.startDate} and #{query.endDate}
+        </if>
+        <if test="query.documentName != null">
+            and t.document_name like #{query.documentName}
+        </if>
+        <if test="query.operatorName != null">
+            and t.operator_name = #{query.operatorName}
+        </if>
+        <if test="query.operation != null">
+            and t.operation = #{query.operation}
+        </if>
+    </sql>
+
+    <select id="searchActivity" resultMap="documentActivityDto">
+        select t.id as id,
+        t.directory_id as directory_id,
+        t.directory_name as directory_name,
+        t.document_id as document_id,
+        t.document_name as document_name,
+        t.document_type as document_type,
+        t.operate_date as operate_date,
+        t.operation as operation,
+        t.operator as operator_id,
+        operator.name as operator_name,
+        operator.avatar as operator_avatar,
+        t.income as income_id,
+        t.income_name as income_name,
+        t.income_mount as income_mount,
+        t.outcome as outcome_id,
+        t.outcome_name as outcome_name,
+        t.outcome_mount as outcome_mount,
+        t.current_name as current_name,
+        t.original_name as original_name,
+        t.owner as owner,
+        t.owner_type as owner_type,
+        t.owner_name as owner_name,
+        owner.avatar as owner_avatar,
+        t.current_permission as current_permission,
+        t.original_permission as original_permission,
+        t.current_description as current_description,
+        t.original_description as original_description,
+        t.current_tags as current_tags,
+        t.original_tags as original_tags,
+        t.content as content
+        from hdms_activity t
+        left join hdms_user operator on operator.id = t.operator
+        left join hdms_user owner on owner.id = t.owner and t.owner_type = 1
+        where t.scope in (2, 3)
+        <include refid="searchCondition"/>
+        order by t.operate_date desc
+        limit #{query.start},#{query.end};
+    </select>
+
+    <select id="countActivity" resultType="integer" >
+        select count(*)
+        from hdms_activity t
+        where t.scope in (2, 3)
+        <include refid="searchCondition"/>
+    </select>
+
+    <select id="findDirectoryActivityByPath" resultMap="documentActivityDto">
+        select t.id                   as id,
+               t.directory_id         as directory_id,
+               t.directory_name       as directory_name,
+               t.document_id          as document_id,
+               t.document_name        as document_name,
+               t.document_type        as document_type,
+               t.operate_date         as operate_date,
+               t.operation            as operation,
+               t.operator             as operator_id,
+               operator.name          as operator_name,
+               operator.avatar        as operator_avatar,
+               t.income               as income_id,
+               t.income_name          as income_name,
+               t.income_mount         as income_mount,
+               t.outcome              as outcome_id,
+               t.outcome_name         as outcome_name,
+               t.outcome_mount        as outcome_mount,
+               t.current_name         as current_name,
+               t.original_name        as original_name,
+               t.owner                as owner,
+               t.owner_type           as owner_type,
+               t.owner_name           as owner_name,
+               owner.avatar           as owner_avatar,
+               t.current_permission   as current_permission,
+               t.original_permission  as original_permission,
+               t.current_description  as current_description,
+               t.original_description as original_description,
+               t.current_tags         as current_tags,
+               t.original_tags        as original_tags,
+               t.content              as content
+        from hdms_activity t
+                 left join hdms_user operator on operator.id = t.operator
+                 left join hdms_user owner on owner.id = t.owner and t.owner_type = 1
+        where t.path like #{path}
+          and t.scope in (2, 3)
+        order by t.operate_date desc;
+    </select>
+    <select id="findDocumentActivityById" resultMap="documentActivityDto">
+        select t.id                   as id,
+               t.directory_id         as directory_id,
+               t.directory_name       as directory_name,
+               t.document_id          as document_id,
+               t.document_name        as document_name,
+               t.document_type        as document_type,
+               t.operate_date         as operate_date,
+               t.operation            as operation,
+               t.operator             as operator_id,
+               operator.name          as operator_name,
+               operator.avatar        as operator_avatar,
+               t.income               as income_id,
+               t.income_name          as income_name,
+               t.income_mount         as income_mount,
+               t.outcome              as outcome_id,
+               t.outcome_name         as outcome_name,
+               t.outcome_mount        as outcome_mount,
+               t.current_name         as current_name,
+               t.original_name        as original_name,
+               t.owner                as owner,
+               t.owner_type           as owner_type,
+               t.owner_name           as owner_name,
+               owner.avatar           as owner_avatar,
+               t.current_permission   as current_permission,
+               t.original_permission  as original_permission,
+               t.current_description  as current_description,
+               t.original_description as original_description,
+               t.current_tags         as current_tags,
+               t.original_tags        as original_tags,
+               t.content              as content
+        from hdms_activity t
+                 left join hdms_user operator on operator.id = t.operator
+                 left join hdms_user owner on owner.id = t.owner and t.owner_type = 1
+        where t.document_id = #{documentId}
+          and t.scope in (1, 3)
+        order by t.operate_date desc;
+    </select>
+
+</mapper>

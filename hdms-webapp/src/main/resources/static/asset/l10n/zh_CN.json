@@ -1,0 +1,57 @@
+{
+  "common": {
+    "YN": {
+      "true": "是",
+      "false": "否"
+    }
+  },
+  "system": {
+    "task": {
+      "status": {
+        "0": "执行完成",
+        "1": "正在运行",
+        "2": "执行错误",
+        "3": "等待执行"
+      }
+    }
+  },
+  "hr": {
+    "user": {
+      "status": {
+        "1": "禁用",
+        "2": "正常",
+        "3": "锁定"
+      }
+    }
+  },
+  "activity": {
+    "upload": "上传",
+    "download": "下载",
+    "create": "创建文件夹",
+    "moveIn": "移入",
+    "moveOut": "移出",
+    "copyIn": "复制进入",
+    "copyOut": "复制出去",
+    "rename": "重命名",
+    "remove": "删除",
+    "delete": "彻底删除",
+    "revert": "恢复",
+    "lock": "锁定",
+    "unlock": "解锁",
+    "addAuthorize": "添加授权",
+    "updateAuthorize": "修改授权",
+    "removeAuthorize": "删除授权",
+    "setTags": "设置标签",
+    "updateDesc": "修改备注",
+    "addReview": "新增评论",
+    "removeReview": "删除评论"
+
+
+  },
+  "share": {
+    "status": {
+      "0": "正常",
+      "1": "已失效"
+    }
+  }
+}

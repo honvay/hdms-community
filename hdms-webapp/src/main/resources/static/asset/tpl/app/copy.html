@@ -1,0 +1,33 @@
+<div class="m-c">
+	<div class="modal-header">
+		<h4 class="modal-title">
+			复制文件(夹)
+		</h4>
+	</div>
+	<div class="modal-body no-padder">
+		<div class="permission-user-body">
+			<div class="col-sm-12 permission-user-part b-r wrapper-sm">
+				<div class="wrapper-xs" >
+					选择要复制到的位置
+				</div>
+				<hc-tree tree-control="tree" 
+					   load-asyn="true" 
+					   leaf-icon="fa fa-folder"
+					   on-node-dbl-click="select(node);"
+					   on-selection-change="setTarget(selection);"
+					   on-before-load="setParam(node,params);"
+					   load-url="fs/folder">
+				</hc-tree>
+			</div>
+		</div>
+		<div class="wrapper-sm b-t row m-l-none m-r-none" ng-show="target">
+			<b>将复制到：</b><span>{{paths}}</span>
+		</div>
+	</div>
+	<div class="modal-footer ">
+		<button type="button" class="btn btn-primary" ng-click="ok()" ng-disabled="!target">
+			确定
+		</button>
+		<button type="button" class="btn btn-default" ng-click="close()">取消</button>
+	</div>
+</div>

@@ -1,0 +1,65 @@
+<div class="m-c">
+	<div class="modal-header">
+		<button type="button" class="close" ng-click="close();">
+			<span aria-hidden="true">×</span>
+		</button>
+		<h4 class="modal-title" style="line-height: 34px;">
+			<i class="fa fa-share-alt"></i>
+			分享文件
+		</h4>
+	</div>
+	<div class="modal-body">
+		<div class="row">
+			<div class="col-sm-12">
+				<form name="shareForm" class="form-horizontal form-validation">
+			        <div class="form-group">
+						<label class="col-sm-2 control-label"  style="padding-left:5px;padding-right:5px;">分享链接：</label>
+						<div class="col-sm-10">
+							<div class="input-group">
+								<span class="input-group-addon" ><i class="fa fa-link"></i></span>
+								<textarea type="text" name="link" id="shareLink" ng-model="link"  class="form-control" readonly="readonly"></textarea>
+								<span class="input-group-btn">
+					          </span>
+							</div>
+						</div>
+					</div>
+					<div class="form-group">
+						<label class="col-sm-2 control-label"  style="padding-left:5px;padding-right:5px;">访问密码：</label>
+						<div class="col-sm-10">
+							<div class="input-group">
+								<span class="input-group-addon" ><i class="glyphicon glyphicon-lock"></i></span>
+								<input type="text" name="code" ng-model="share.password"  class="form-control">
+							</div>
+						</div>
+					</div>
+					<div class="form-group">
+						<label class="col-sm-2 control-label"  style="padding-left:5px;padding-right:5px;">到期时间：</label>
+						<div class="col-sm-10">
+							<div class="input-group">
+								<span class="input-group-addon" ><i class="fa fa-calendar"></i></span>
+					            <input type="text" class="form-control" ng-click="opened = true" date-format="YYYY-MM-DD" ng-model="share.dueDate" datepicker-popup="yyyy-MM-dd" is-open="opened" 
+				     			  datepicker-options="{formatYear: 'yyyy',class:'datepicker',showWeeks:false}" close-text="关闭" current-text="今天" clear-text="清除" />
+					        </div>
+						</div>
+					</div>
+					<div class="alert alert-warning m-b-none">
+						<p style="text-indent: 2em"><b>说明：</b>分享个人文档任何用户可以通过密码（如果有设置）进行访问，分享企业文档除密码之外（如果有设置）必须用户拥有权限才能访问。</p>
+					</div>
+				</form>
+			</div>
+		</div>
+	</div>
+	
+	<div class="modal-footer ">
+		<button type="button" class="btn btn-primary " ng-click="update()" ng-disabled="!shareForm.$dirty || saving">
+			<span ng-show="!saving">提交</span>
+			<span ng-show="saving">正在提交...</span>
+		</button>
+		<button type="button" class="btn btn-primary" ng-click="remove()" ng-disabled="deleting || !share">
+			<span ng-show="!deleting">删除分享</span>
+			<span ng-show="deleting">正在删除...</span>
+		</button>
+		<button class="btn btn-default" type="button" ng-click="copy();"> <i class="fa fa-copy"></i> 复制链接 </button>
+		<button type="button" class="btn btn-default" ng-click="close()">关闭</button>
+	</div>
+</div>

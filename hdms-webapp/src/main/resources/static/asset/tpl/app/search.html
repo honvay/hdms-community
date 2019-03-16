@@ -1,0 +1,186 @@
+<div class="app-ctrl" style="padding-top:90px;overflow: hidden;padding-bottom: 42px;" ng-show="!error">
+	<div class="b-b app-title-fixed padder">
+		<div class="row wrapper-xs b-b bg-light">
+			<div class="col-sm-9 col-xs-9 padder-sm" >
+          		<span class="m-n directory-header text-md">
+          			<i class="fa fa-search"></i>
+          			"{{keyword}}" - 搜索结果
+          		</span>
+          		<span class="text-sm m-l-xs" ng-show="result.records.length > 0">
+					( <span ng-show="selection.length > 0">{{selection.length}} / </span>{{files.length}} )
+				</span>
+			</div>
+			<div class="col-sm-3 col-xs-3 padder-sm ">
+				<div class="pull-right">
+					<button class="btn btn-md btn-default" ng-click="switchMode()">
+						<i class="fa" ng-class="{ true:'fa-list',false:'fa-th'}[mode == 'list']"></i>
+						<span ng-show="mode == 'list'">列表视图</span> 
+						<span ng-show="mode == 'block'">图标视图</span>
+					</button>
+					<div class="btn-group" dropdown is-open="openSortmenu">
+						<button type="button" class="btn btn-md btn-default" ng-click="changeDesc();">
+							<i ng-class="{'fa-long-arrow-down' : sortDesc,'fa-long-arrow-up':!sortDesc}" class="fa"></i> 
+							<span ng-show="sortField == 'name'">名称</span>
+							<span ng-show="sortField == 'size'">大小</span>
+							<span ng-show="sortField == 'creationBy.name'">创建者</span>
+							<span ng-show="sortField == 'updateDate'">时间</span>
+						</button>
+						<button type="button" btn-md class="btn btn-md btn-default dropdown-toggle"
+							dropdown-toggle>
+							<span class="caret"></span>
+						</button>
+						<ul class="dropdown-menu" role="menu"
+							style="left: inherit; right: 0px;">
+							<li><a href ng-click="changeSort('name')"> 名称 </a></li>
+							<li><a href ng-click="changeSort('size')"> 大小 </a></li>
+							<li><a href ng-click="changeSort('creationBy.name')"> 创建者 </a></li>
+							<li><a href ng-click="changeSort('updateDate')"> 时间 </a></li>
+						</ul>
+					</div>
+				</div>
+			</div>
+		</div>
+		<div class="row wrapper-xs bg-light lter">
+			<div class="col-sm-10 col-xs-10 padder-sm">
+				<button class="btn btn-md btn-default" ng-click="open(selection[0],$event)" ng-show="selection.length == 1 ">
+					<i class="glyphicon glyphicon-new-window"></i> 打开文件
+				</button>
+				<button class="btn btn-md btn-default" ng-click="openParent(selection[0],$event)" ng-show="selection.length == 1 ">
+					<i class="fa fa-folder-open"></i> 打开所在文件夹
+				</button>
+				<button class="btn btn-md btn-default" ng-click="download()" ng-show="selection.length > 0 ">
+					<i class="glyphicon glyphicon-cloud-download"></i> 下载
+				</button>
+			</div>
+			<div class="col-sm-2 col-xs-2 text-right padder-sm">
+				<div class="input-group-icon directory-search">
+					<i class="glyphicon glyphicon-search input-icon"></i>
+					<input type="text" ng-model="condition" class="form-control input-sm rounded" placeholder='在结果中搜索'>
+				</div>
+			</div>
+		</div>
+	</div>
+	<div class="bg-white app-inner" >
+		<div class="table-responsive file-list" ng-if="mode== 'list'" ng-show="result.records.length > 0 && !loading">
+			<table class="table b-b b-light lter file-table" >
+				<thead>
+				<tr>
+					<th width="5%"><label class="i-checks i-checks-sm m-b-none" ng-show="!condition">
+						<input type="checkbox" ng-click="selectAll()"
+							   ng-checked="isSelectAll"><i></i>
+					</label></th>
+					<th ng-click="changeSort('name')">名称 <i
+							ng-show="sortField == 'name'"
+							ng-class="{'fa-caret-up' : !sortDesc,'fa-caret-down':sortDesc}"
+							class="fa"> </i>
+					</th>
+                    <th width="20%">
+                        路径
+                    </th>
+					<th ng-click="changeSort('size')" width="120px">大小 <i
+							ng-show="sortField == 'size'"
+							ng-class="{'fa-caret-up' : !sortDesc,'fa-caret-down':sortDesc}"
+							class="fa"> </i>
+					</th>
+					<th ng-click="changeSort('creationBy.name')" width="200px">创建者
+						<i ng-show="sortField == 'creationBy.name'"
+						   ng-class="{'fa-caret-up' : !sortDesc,'fa-caret-down':sortDesc}"
+						   class="fa"> </i>
+					</th>
+					<th ng-click="changeSort('updateDate')" width="200px">修改时间 <i
+							ng-show="sortField == 'updateDate'"
+							ng-class="{'fa-caret-up' : !sortDesc,'fa-caret-down':sortDesc}"
+							class="fa"> </i>
+					</th>
+				</tr>
+				</thead>
+				<tbody>
+				<tr ng-repeat="file in result.records | orderBy:sortFields:sortDesc | filter:{name:condition}"
+					class="file-item hc-item"
+					ng-class="{true:'active'}[file.selected]"
+					valign="middle"
+					ng-click="select(file)">
+					<td width="5%">
+						<label class="i-checks i-checks-sm m-b-none" >
+							<input type="checkbox" ng-checked="file.selected" ng-click="select(file);"><i></i>
+						</label>
+					</td>
+					<td class="text-ellipsis">
+						<a ng-click="open(file,$event);">
+							<div class="file-icon-wrapper">
+								<img class="file-icon" ng-src="{{getIcon(file)}}" />
+							</div>
+							{{file.name}}
+						</a>
+					</td>
+                    <td>
+                        <a ng-click="openParent(file,$event)">
+                            {{file.fullName.split('/').slice(0,-1).join("/")}}
+                        </a>
+                    </td>
+					<td>{{file.size | formatSize}}</td>
+					<td>
+						<img ng-if="file.creationBy" ng-src="{{file.creationBy.avatar | resource}}" class="img-circle" style="height:30px;float:left;" alt="...">
+						<span class="m-l-xs">{{file.creationBy.name}}</span>
+					</td>
+					<td>{{file.updateDate}}</td>
+				</tr>
+				</tbody>
+			</table>
+		</div>
+		<div ng-if="mode == 'block'">
+			<ul class="file-block-list">
+				<li class="file-block" 
+					ng-class="{true:'active'}[file.selected]" 
+					ng-click="select(file,null,$event)"
+					ng-dblclick="open(file,$event);"
+				 	ng-repeat="file in result.records|orderBy:sortField:sortDesc | filter:{name:condition}">
+					<img class="file-icon" ng-src="{{getIcon(file)}}">
+					<div class="file-name text-ellipsis m-t-sm" tooltip="{{file.name}}" tooltip-placement="bottom">{{file.name}}</div>
+				</li>
+			</ul>
+		</div>
+		<div class="wrapper-xl text-center" ng-show="loading">
+			<img ng-src="{{'asset/img/loading.gif' | resource}}"/>
+			<p class="m-t-sm">正在加载</p>
+		</div>
+		<div class="wrapper-xl text-center" ng-show="(result.records.length == 0 || !result.records) && !loading">
+            <i class="iconfont icon-empty"></i>
+			<p class="m-t-md">没有搜索到与关键词匹配的文件</p>
+		</div>
+	</div>
+	<div class="pos-abt w-full b-t" style="bottom:0px" ng-show="!error && result.total > 0 && !loading">
+				<div class="col-sm-6 wrapper-xs">
+				   <button class="btn btn-sm btn-link" ng-click="loadPage(1)" ng-disabled="pagination.page == 1">
+						<i class="fa fa-fast-backward"></i>
+					</button>
+					<button class="btn btn-sm btn-link" ng-click="loadPage(pagination.page - 1)"  ng-disabled="pagination.page == 1">
+						<i class="fa fa-backward"></i>
+					</button>
+					<input class="inline form-control input-sm" style="width: 30px" ng-model-options="{ updateOn: 'blur' }" ng-change="onPageChange();" ng-model="pagination.page"/>
+					/
+					<span>{{pagination.pages}}</span>
+					<button class="btn btn-sm btn-link" ng-click="loadPage(pagination.page + 1)" ng-disabled="pagination.page == pagination.pages">
+						<i class="fa fa-forward"></i>
+					</button>
+					<button class="btn btn-sm btn-link"  ng-click="loadPage(pagination.pages)" ng-disabled="pagination.page == pagination.pages">
+						<i class="fa fa-fast-forward"></i>
+					</button>
+				</div>
+				<div class="col-sm-6 wrapper-xs text-right">
+					<div style="line-height: 30px">共{{result.total}}条数据，每页显示
+					<select class="form-control input-sm inline" style="width:65px;" ng-change="reload()" ng-model="pagination.size">
+						<option value="20">20</option>
+						<option value="50">50</option>
+						<option value="100">100</option>
+						<option value="200">200</option>
+					</select>
+					条</div>
+				</div>
+				<div class="clearfix"></div>
+			</div>
+</div>
+<div class="wrapper-xl text-center" ng-show="error">
+    <i class="iconfont icon-error" ></i>
+    <p class="m-t-md">搜索文件失败：{{error}}</p>
+</div>

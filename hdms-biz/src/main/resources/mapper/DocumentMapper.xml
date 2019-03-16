@@ -1,0 +1,287 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper namespace="com.honvay.hdms.dms.document.mapper.DocumentMapper">
+
+    <resultMap id="documentFullDto" type="com.honvay.hdms.dms.model.dto.DocumentFullDto">
+        <id property="id" column="id" javaType="INTEGER"/>
+        <result property="name" jdbcType="VARCHAR" column="name"/>
+        <result property="accessibility" jdbcType="VARCHAR" column="accessibility"/>
+        <result property="mount" jdbcType="INTEGER" column="mount"/>
+        <result property="parent" jdbcType="INTEGER" column="parent"/>
+        <result property="tags" jdbcType="VARCHAR" column="tags"/>
+        <result property="path" jdbcType="VARCHAR" column="path"/>
+        <result property="code" jdbcType="VARCHAR" column="code"/>
+        <result property="permission" jdbcType="VARCHAR" column="permission"/>
+        <result property="root" jdbcType="INTEGER" column="root"/>
+        <result property="size" jdbcType="INTEGER" column="size"/>
+        <result property="type" jdbcType="VARCHAR" column="type"/>
+        <result property="contentType" jdbcType="VARCHAR" column="contentType"/>
+        <result property="description" jdbcType="VARCHAR" column="description"/>
+        <result property="fullName" jdbcType="VARCHAR" column="fullName"/>
+        <result property="name" jdbcType="VARCHAR" column="name"/>
+        <result property="createDate" jdbcType="TIMESTAMP" column="createDate"/>
+        <result property="lockDate" jdbcType="TIMESTAMP" column="lockDate"/>
+        <result property="updateDate" jdbcType="TIMESTAMP" column="updateDate"/>
+        <result property="deleteDate" jdbcType="TIMESTAMP" column="deleteDate"/>
+        <result property="locked" jdbcType="CHAR" column="locked"/>
+        <result property="deleted" jdbcType="CHAR" column="deleted"/>
+        <result property="favoriteId" jdbcType="VARCHAR" column="favoriteId"/>
+        <association property="creationBy" javaType="com.honvay.hdms.dms.model.dto.DocumentOperatorDto">
+            <result property="id" column="creationById"/>
+            <result property="name" column="creationByName"/>
+            <result property="avatar" column="creationByAvatar"/>
+        </association>
+        <association property="updatedBy" javaType="com.honvay.hdms.dms.model.dto.DocumentOperatorDto">
+            <result property="id" column="updateById"/>
+            <result property="name" column="updateByName"/>
+            <result property="avatar" column="updateByAvatar"/>
+        </association>
+        <association property="lockedBy" javaType="com.honvay.hdms.dms.model.dto.DocumentOperatorDto">
+            <result property="id" column="lockedById"/>
+            <result property="name" column="lockedByName"/>
+            <result property="avatar" column="lockedByAvatar"/>
+        </association>
+        <association property="deleteBy" javaType="com.honvay.hdms.dms.model.dto.DocumentOperatorDto">
+            <result property="id" column="deleteById"/>
+            <result property="name" column="deleteByName"/>
+            <result property="avatar" column="deleteByAvatar"/>
+        </association>
+    </resultMap>
+
+    <resultMap id="directoryDto" type="com.honvay.hdms.dms.model.dto.DirectoryNodeDto">
+        <id property="id" column="id" javaType="INTEGER"/>
+        <result property="name" jdbcType="VARCHAR" column="name"/>
+        <result property="fullName" jdbcType="VARCHAR" column="fullName"/>
+        <result property="mount" jdbcType="INTEGER" column="mount"/>
+        <result property="createdBy" jdbcType="INTEGER" column="createdBy"/>
+        <result property="path" jdbcType="VARCHAR" column="path"/>
+    </resultMap>
+
+    <resultMap id="documentSimpleDto" type="com.honvay.hdms.dms.model.dto.DocumentSimpleDto">
+        <id property="id" column="id" javaType="INTEGER"/>
+        <result property="name" jdbcType="VARCHAR" column="name"/>
+        <result property="accessibility" jdbcType="VARCHAR" column="accessibility"/>
+    </resultMap>
+
+    <sql id="documentFullSql">
+        select t.id             as id,
+               t.name           as name,
+               t.accessibility  as accessibility,
+               t.mount          as mount,
+               t.parent         as parent,
+               t.tags           as tags,
+               t.path           as path,
+               t.permission     as permission,
+               t.root           as root,
+               t.size           as size,
+               t.type           as type,
+               t.create_date    as createDate,
+               t.update_date    as updateDate,
+               t.full_name      as fullName,
+               t.content_type   as contentType,
+               t.code           as code,
+               t.description    as description,
+               createdBy.id     as creationById,
+               createdBy.name   as creationByName,
+               createdBy.avatar as creationByAvatar,
+               updatedBy.id     as updateById,
+               updatedBy.name   as updateByName,
+               updatedBy.avatar as updateByAvatar,
+               lockedBy.id      as lockedById,
+               lockedBy.name    as lockedByName,
+               lockedBy.avatar  as lockedByAvatar,
+               t.lock_date      as lockDate,
+               t.locked         as locked,
+               deleteBy.id      as deleteById,
+               deleteBy.name    as deleteByName,
+               deleteBy.avatar  as deleteByAvatar,
+               t.deleted        as deleted,
+               t.delete_date    as deleteDate,
+               favorite.id      as favoriteId
+        from hdms_document t
+                 left join hdms_user createdBy on createdBy.id = t.created_by
+                 left join hdms_user updatedBy on updatedBy.id = t.updated_By
+                 left join hdms_user lockedBy on lockedBy.id = t.locked_by
+                 left join hdms_user deleteBy on deleteBy.id = t.deleted_by
+                 left join hdms_favorite favorite on favorite.document_id = t.id
+    </sql>
+
+    <select id="findFullDocument" resultMap="documentFullDto">
+        <include refid="documentFullSql"/>
+        where
+        t.parent = #{parent}
+        <if test="mount != null">
+            and t.mount = #{mount}
+        </if>
+        and t.deleted = false
+    </select>
+
+    <select id="searchFullDocument" resultMap="documentFullDto">
+        <include refid="documentFullSql"/>
+        where t.id in(
+        (select d.id from (select id from(
+        select id from hdms_document a
+        where a.mount = #{organizationMount}
+        and a.deleted = false
+        and
+        <foreach collection="paths" item="path" open="(" close=")" separator="or">
+            a.path like #{path}
+        </foreach>
+        and a.name like #{name}
+        union all
+        select id from hdms_document b
+        where b.mount = #{userMount}
+        and b.deleted = false
+        and b.name like #{name}
+        ) as c limit #{start}, #{end}) as d)
+        )
+    </select>
+
+    <select id="countFullDocument" resultType="integer">
+        select count(*) from (
+        select 1 from hdms_document a
+        where a.mount = #{departmentId}
+        and a.deleted = false
+        and
+        <foreach collection="paths" item="path" open="(" close=")" separator="or">
+            a.path like #{path}
+        </foreach>
+        and a.name like #{name}
+        union all
+        select 1 from hdms_document b
+        where b.mount = #{userId}
+        and b.deleted = false
+        and b.name like #{name}
+        ) as c
+    </select>
+
+    <select id="findDeletedFullDocument" resultMap="documentFullDto">
+        <include refid="documentFullSql"/>
+        where t.id in(
+                select id from hdms_document a
+                where a.mount = #{organizationMount}
+                and a.deleted = true
+                and
+                <foreach collection="paths" item="path" open="(" close=")" separator="or">
+                    a.path like #{path}
+                </foreach>
+                union all
+                select id from hdms_document b
+                where b.mount = #{userMount}
+                and b.deleted = true
+            )
+    </select>
+
+    <select id="getFullDocument" resultMap="documentFullDto">
+        <include refid="documentFullSql"/>
+        where t.id = #{id}
+        and t.type = #{type}
+        and t.deleted = false
+    </select>
+
+    <select id="findDirectory" resultMap="directoryDto">
+        select t.id         as id,
+               t.name       as name,
+               t.full_name  as fullName,
+               t.mount      as mount,
+               t.created_by as createdBy,
+               t.path       as path
+        from hdms_document t
+        where t.parent = #{parent}
+          and t.mount = #{mount}
+          and t.deleted = false
+          and t.type = 'directory'
+    </select>
+
+    <select id="findFavorites" resultMap="documentFullDto">
+        <include refid="documentFullSql"/>
+        where exists (select 1 from hdms_favorite a where a.document_id = t.id and a.user_id = #{userId})
+        and t.deleted = false
+    </select>
+    <select id="findRecent" resultMap="documentFullDto">
+        <include refid="documentFullSql"/>
+        where exists (select 1 from hdms_recent a where a.document_id = t.id and a.user_id = #{userId})
+        and t.deleted = false
+
+    </select>
+
+    <update id="updateTags">
+        update hdms_document t
+        set t.tags        = #{tags},
+            t.update_date = now(),
+            t.updated_by  = #{userId}
+        where t.id = #{id}
+    </update>
+
+    <update id="lock">
+        update hdms_document t
+        set t.lock_date   = now(),
+            t.locked      = true,
+            t.locked_by   = #{userId},
+            t.update_date = now(),
+            t.updated_by  = #{userId}
+        where t.id = #{id}
+          and t.locked = false;
+    </update>
+
+    <update id="unlock">
+        update hdms_document t
+        set t.lock_date   = null,
+            t.locked      = false,
+            t.locked_by   = null,
+            t.update_date = now(),
+            t.updated_by  = #{userId}
+        where t.id = #{id}
+          and t.locked = true;
+    </update>
+
+    <update id="remove">
+        update hdms_document t
+        set t.delete_date = now(),
+            t.deleted     = true,
+            t.deleted_by  = #{userId},
+            t.update_date = now(),
+            t.updated_by  = #{userId}
+        where t.id = #{id}
+          and t.deleted = false;
+    </update>
+    <update id="revert">
+        update hdms_document t
+        set t.name        = #{name},
+            t.delete_date = null,
+            t.deleted     = false,
+            t.deleted_by  = null,
+            t.update_date = now(),
+            t.updated_by  = #{userId}
+        where t.id = #{id}
+          and t.deleted = true;
+    </update>
+    <update id="rename">
+        update hdms_document t
+        set t.name        = #{name},
+            t.update_date = now(),
+            t.updated_by  = #{userId}
+        where t.id = #{id};
+    </update>
+
+    <update id="batchUpdateChildren">
+        update hdms_document t
+        set t.mount     = #{mount},
+            t.path      = concat(#{newPath}, substring(t.path, length(#{oldPath}) + 1)),
+            t.full_name = concat(#{newFullName}, right(t.full_name, length(t.full_name) - length(#{oldFullName})))
+        where t.path like #{pathCondition};
+    </update>
+
+    <select id="findCodeByPath" resultType="string">
+        select code
+        from hdms_document t
+        where t.path like #{path}
+    </select>
+
+    <select id="sumSizeByUserId" resultType="long">
+        select sum(t.size)
+        from hdms_document t
+        where t.created_by = #{userId}
+          and t.type = 'file';
+    </select>
+</mapper>

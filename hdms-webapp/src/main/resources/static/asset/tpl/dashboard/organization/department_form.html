@@ -1,0 +1,71 @@
+<div class="m-c">
+    <div class="modal-header">
+        <h4 class="modal-title">{{operation}}部门</h4>
+    </div>
+    <div class="modal-body wrapper-lg">
+        <div class="row">
+            <div class="col-sm-12">
+                <form name="departmentForm" class="form-horizontal form-validation">
+                    <div class="form-group">
+                        <label class="col-sm-3 control-label required">部门名称</label>
+                        <div class="col-sm-9">
+                            <input type="text" name="name" ng-model="department.name" required class="form-control">
+                        </div>
+                    </div>
+                    <div class="form-group">
+                        <label class="col-sm-3 control-label required">部门编号</label>
+                        <div class="col-sm-9">
+                            <input type="text" name="code" ng-model="department.code" required ng-minlength="2"
+                                   class="form-control">
+                        </div>
+                    </div>
+                    <div class="form-group" ng-if="department.parent">
+                        <label class="col-sm-3 control-label required">上级部门</label>
+                        <div class="col-sm-9">
+                            <div class="input-group" dropdown is-open="openTree" dropdown-toggle>
+                                <input type="text" required ng-model="department.parent.name"   readonly class="form-control">
+                                <div class="input-group-btn">
+                                    <button type="button" class="btn btn-default dropdown-toggle" >
+                                        <span class="caret"></span>
+                                    </button>
+                                </div>
+                                <div class="dropdown-menu w-full">
+                                    <hc-tree tree-control="tree"
+                                             load-asyn="true"
+                                             open-folder-icon="fa fa-users"
+                                             folder-icon="fa fa-users"
+                                             leaf-icon="fa fa-users"
+                                             on-selection-change="onSelect(selection);"
+                                             load-url="/department/list">
+                                    </hc-tree>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                    <div class="form-group" ng-show="invalid && changed">
+                        <div class="col-sm-12 m-t-md text-center">
+                            <span class="alert alert-danger" role="alert">不能移动到自身或者自身以下的部门</span>
+                        </div>
+                    </div>
+                    <div class="form-group">
+                        <label class="col-sm-3 control-label">排序号</label>
+                        <div class="col-sm-9">
+                            <input type="number" name="orderNo" ng-model="department.orderNo" class="form-control">
+                        </div>
+                    </div>
+                    <div class="form-group m-b-none" ng-show="result">
+                        <div class="col-sm-12 m-b-none">
+                            <div class="alert alert-danger" role="alert">{{result.message}}</div>
+                        </div>
+                    </div>
+                </form>
+            </div>
+        </div>
+    </div>
+    <div class="modal-footer" style="text-align: right;">
+        <button type="button" class="btn btn-primary" ng-click="save()"
+                ng-disabled="departmentForm.$invalid || !departmentForm.$dirty">保存
+        </button>
+        <button type="button" class="btn btn-default" ng-click="cancel()">取消</button>
+    </div>
+</div>

@@ -1,0 +1,40 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper namespace="com.honvay.hdms.message.mapper.MessageMapper">
+
+    <resultMap id="messageDto" type="com.honvay.hdms.message.model.MessageDto">
+        <id property="id" jdbcType="INTEGER" column="id"/>
+        <result column="content" jdbcType="VARCHAR" property="content"/>
+        <result column="send_date" jdbcType="TIMESTAMP" property="sendDate"/>
+        <association property="sender" javaType="com.honvay.hdms.dms.model.dto.DocumentOperatorDto">
+            <result property="id" column="sender"/>
+            <result property="name" column="sender_name"/>
+            <result property="avatar" column="sender_avatar"/>
+        </association>
+        <association property="document" javaType="com.honvay.hdms.dms.model.dto.DocumentSimpleDto">
+            <result property="id" column="document_id"/>
+            <result property="name" jdbcType="VARCHAR" column="name"/>
+            <result property="type" jdbcType="VARCHAR" column="type"/>
+            <result property="size" jdbcType="INTEGER" column="size"/>
+            <result property="accessibility" jdbcType="VARCHAR" column="accessibility"/>
+        </association>
+    </resultMap>
+    <select id="findUnreadByReceiver" resultMap="messageDto">
+        select t.id          as id,
+               t.content     as content,
+               t.send_date   as send_date,
+               t.sender      as sender,
+               sender.name   as sender_name,
+               sender.avatar as sender_avatar,
+               t.document_id as document_id,
+               document.name as name,
+               document.type as type,
+               document.size as size
+        from hdms_message t
+                 left join hdms_user sender on sender.id = t.sender
+                 left join hdms_document document on document.id = t.document_id
+        where t.receiver = #{receiver}
+          and t.readed = false
+    </select>
+
+</mapper>

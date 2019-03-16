@@ -1,0 +1,69 @@
+<!DOCTYPE html>
+<html lang="zh_CN">
+<head>
+    <title>瀚为云文档协作平台 - 登录</title>
+    <meta charset="UTF-8"/>
+    <meta http-equiv="content-type" content="text/html; charset=utf-8">
+    <meta content="IE=edge" http-equiv="X-UA-Compatible">
+    <meta name="viewport"
+          content="width=device-width,initial-scale=1.0,maximum-scale=1.0,minimum-scale=1.0,user-scalable=no">
+    <link rel="stylesheet" href="/asset/dist/css/basic.min.css" type="text/css"/>
+    <link rel="shortcut icon" href="/asset/img/logo_60_blue.png">
+</head>
+<body>
+<div class="bg-primary wrapper-xxl">
+    <img alt="" src="/asset/img/logo_100.png" style="height: 30px;margin-top: -12px;">
+    <span class="text-2x m-l-sm" style="color:#fff;">瀚为云文档协作平台 - 登录</span>
+</div>
+<div class="wrapper-xxl text-center">
+    <form action="/login" class="w-xl" method="post" style="margin: 0 auto;">
+        <input type="hidden" value="${redirect}" name="redirect">
+        <div class="text-left" th:if="${session.authentication_fail_message}">
+            <div class="alert alert-danger">
+                <span th:text="${session.authentication_fail_message}"></span>
+            </div>
+        </div>
+        <div class="text-left" th:if="${param.logout}">
+            <div class="alert alert-info">
+                已退出登录
+            </div>
+        </div>
+        <div class="text-left" th:if="${param.session}">
+            <div class="alert alert-danger">
+                会话已过期，请重新登录
+            </div>
+        </div>
+        <div class="input-group-icon m-b">
+            <i class="glyphicon glyphicon-user input-icon"></i>
+            <input type="text" name="username" class="form-control" placeholder="用户名" required autofocus>
+        </div>
+        <div class="input-group-icon m-b">
+            <i class="glyphicon glyphicon-lock input-icon"></i>
+            <input type="password" name="password" class="form-control" placeholder="密码" required>
+        </div>
+        <div class="input-group input-group-icon m-b" th:if="${session.captcha_authentication_required}">
+            <i class="glyphicon glyphicon-picture input-icon" style="z-index:99"></i>
+            <input type="text" class="form-control" name="captcha" placeholder="输入验证码">
+            <span class="input-group-addon" style="padding: 0px;">
+                                <img id="captcha" onclick="this.src=this.src"
+                                     style="height: 30px;cursor: pointer" src="/captcha">
+                             </span>
+        </div>
+        <div class="input-group text-left m-b">
+            <label class="i-checks">
+                <input type="checkbox" name="rememberMe"><i></i>
+                记住我
+            </label>
+        </div>
+        <div class="row" style="margin-top: 8px;">
+            <div class="col-xs-12 col-sm-12 col-md-12">
+                <input type="hidden" th:name="${_csrf.parameterName}" th:value="${_csrf.token}"/>
+                <button id="login-btn" class="btn btn-primary btn-block" type="submit">
+                    登&nbsp;&nbsp;录
+                </button>
+            </div>
+        </div>
+    </form>
+</div>
+</body>
+</html>

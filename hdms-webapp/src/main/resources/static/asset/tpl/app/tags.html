@@ -1,0 +1,32 @@
+<div class="m-c">
+	<div class="modal-header">
+		<h4 class="modal-title">
+			<i class="fa fa-tags"></i> 设置标签
+					<button type="button" class="close" ng-click="cancel();">×</button>
+		</h4>
+	</div>
+	<div class="modal-body no-padder">
+		<div class="wrapper-md clearfix" ng-show="tags.length > 0">
+			<div class="i-tag i-tag-close" ng-repeat="tag in tags track by $index">
+				<span>{{tag}}</span>
+				<a href="javascript:void(0);" class="close" ng-click="remove(tag)">×</a>
+			</div>
+		</div>
+		<div class="wrapper-md text-center" ng-show="tags.length == 0">
+			没有设置标签
+		</div>
+		<div class="wrapper-md b-t">
+			<form name="tagForm" class="form-horizontal form-validation">
+				<div class="input-group">
+				  <span class="input-group-addon">添加标签</span>
+		          <input type="text" class="form-control" ng-model="tag" placeholder="标签长度200个字内">
+		          <div class="input-group-btn">
+		            <button type="button" class="btn btn-default" ng-diabled="tag" ng-click="add();">
+		            	<i class="glyphicon glyphicon-ok"></i>
+		            </button>
+		          </div>
+		        </div>
+			</form>
+		</div>
+	</div>
+</div>

@@ -1,0 +1,182 @@
+<div ng-controller="ActivityCtrl" class="app-ctrl" style="padding-top: 94px;padding-bottom: 42px;">
+    <div class="bg-light b-b app-title-fixed">
+        <div class="col-sm-12 wrapper-sm col-xs-12 b-b">
+				<span class="text-md">
+					<i class="glyphicon glyphicon-list-alt"></i>
+					操作日志
+				</span>
+        </div>
+        <div class="col-sm-12 wrapper-sm lter col-xs-12">
+            <iframe class="hidden" name="exportIframe"></iframe>
+            <form id="conditionForm" class="form-inline text-xs" target="exportIframe" action="/activity/export">
+                <div class="form-group m-r-xs ">
+                    <label>时间：</label>
+                    <input type="text" name="start" class="form-control input-sm" ng-click="startOpended = true"
+                           date-format="YYYY-MM-DD" ng-model="condition.start" datepicker-popup="yyyy-MM-dd"
+                           is-open="startOpended"
+                           style="width:100px;"
+                           datepicker-options="{formatYear: 'yyyy',class:'datepicker',showWeeks:false}" close-text="关闭"
+                           current-text="今天" clear-text="清除"/>
+                    -
+                    <input type="text" name="end" class="form-control input-sm" date-format="YYYY-MM-DD"
+                           ng-click="endOpened = true" ng-model="condition.end" datepicker-popup="yyyy-MM-dd"
+                           is-open="endOpened"
+                           style="width:100px;"
+                           datepicker-options="{formatYear: 'yyyy',class:'datepicker',showWeeks:false}" close-text="关闭"
+                           current-text="今天" clear-text="清除"/>
+                </div>
+                <div class="form-group text-xs m-r-xs">
+                    <label>文件名称：</label>
+                    <input type="text" name="fileName" style="width:120px;" class="form-control input-sm" id="name"
+                           ng-model="condition.fileName">
+                </div>
+                <div class="form-group m-r-xs text-xs">
+                    <label>操作人：</label>
+                    <input type="text" name="operator" style="width:120px;" class="form-control input-sm" id="operator"
+                           ng-model="condition.operator">
+                </div>
+                <div class="form-group m-r-xs text-xs">
+                    <label>操作类型：</label>
+                    <select type="text" name="operation" class="form-control input-sm" id="operation"
+                            ng-model="condition.operation">
+                        <option value="">所有</option>
+                        <option value="upload">上传</option>
+                        <option value="download">下载</option>
+                        <option value="create">创建</option>
+                        <option value="moveIn">移入</option>
+                        <option value="moveOut">移出</option>
+                        <option value="copyIn">复制进入</option>
+                        <option value="copyIn">复制出去</option>
+                        <option value="rename">重命名</option>
+                        <option value="remove">删除</option>
+                        <option value="delete">彻底删除</option>
+                        <option value="revert">恢复</option>
+                        <option value="lock">锁定</option>
+                        <option value="unlock">解锁</option>
+                        <option value="addAuthorize">添加授权</option>
+                        <option value="updateAuthorize">修改授权</option>
+                        <option value="removeAuthorize">删除授权</option>
+                        <option value="setTags">设置标签</option>
+                        <option value="updateDesc">修改备注</option>
+                        <option value="addReview">新增评论</option>
+                        <option value="removeReview">删除评论</option>
+                    </select>
+                </div>
+                <div class="pull-right">
+                    <button type="button" class="btn btn-sm btn-default" ng-click="reload()">
+                        <i class='glyphicon glyphicon-search'></i>
+                        搜索
+                    </button>
+                    <button type="button" class="btn btn-sm btn-default" onclick="$('#conditionForm').submit();">
+                        <i class='glyphicon glyphicon-export'></i>
+                        导出
+                    </button>
+                </div>
+            </form>
+        </div>
+    </div>
+    <div class="app-inner bg-light lter" ng-show="!error">
+        <div class="table-responsive h-full" ng-show="result.total > 0 && !loading">
+            <table class="table table-hover b-b" style="table-layout: fixed">
+                <thead>
+                <tr>
+                    <th width="10%">
+                        操作人
+                    </th>
+                    <th width="15%">
+                        操作时间
+                    </th>
+                    <th width="10%">
+                        操作类型
+                    </th>
+                    <th width="25%">
+                        操作对象
+                    </th>
+                    <!-- <th ng-click="title='status';desc=!desc" width="20%">
+                        对象路径
+                    </th> -->
+                    <th width="40%">描述</th>
+                </tr>
+                </thead>
+                <tbody>
+                <tr ng-repeat="activity in result.records" valign="middle">
+                    <td>{{activity.operator.name}}</td>
+                    <td>{{activity.operateDate}}</td>
+                    <td>{{activity.operation | translate:'activity'}}</td>
+                    <td style="word-break: break-all;">
+                        {{activity.document.name}}
+                    </td>
+                    <!-- <td style="padding-top: 12px;">
+                        {{activity.currentPath}}
+                    </td> -->
+                    <td ng-switch="activity.operation" style="word-break: break-all;">
+                        <div ng-switch-when="rename">
+                            <span>更改前：{{activity.originalDescription}}</span><br/>
+                            <span>更改后：{{activity.currentName}}</span>
+                        </div>
+                        <div ng-switch-when="copy">
+                            <span>原路径：{{activity.originalPath}}</span><br/>
+                            <span>现路径：{{activity.currentPath}}</span>
+                        </div>
+                        <div ng-switch-when="move">
+                            <span>原路径：{{activity.originalPath}}</span><br/>
+                            <span>现路径：{{activity.currentPath}}</span>
+                        </div>
+                        <div ng-switch-default>
+                            {{activity.currentPath}}
+                        </div>
+                    </td>
+                </tr>
+                </tbody>
+            </table>
+        </div>
+        <div class="wrapper-xl text-center" ng-show="loading">
+            <img ng-src="{{'asset/img/loading.gif' | resource}}"/>
+            <p class="m-t-sm">正在加载</p>
+        </div>
+        <div class="wrapper-xl text-center" ng-show="result.total == 0 && !loading">
+            <i class="iconfont icon-empty"></i>
+            <p class="m-t-md">没有查找到数据</p>
+        </div>
+    </div>
+    <div class="pos-abt w-full b-t" style="bottom:0px" ng-show="!error && result.total > 0 && !loading">
+        <div class="col-sm-6 wrapper-xs">
+            <button class="btn btn-sm btn-link" ng-click="loadPage(1)" ng-disabled="pagination.page == 1">
+                <i class="fa fa-fast-backward"></i>
+            </button>
+            <button class="btn btn-sm btn-link" ng-click="loadPage(pagination.page - 1)"
+                    ng-disabled="pagination.page == 1">
+                <i class="fa fa-backward"></i>
+            </button>
+            <input class="inline form-control input-sm" style="width: 30px" ng-model-options="{ updateOn: 'blur' }"
+                   ng-change="onPageChange();" ng-model="pagination.page"/>
+            /
+            <span>{{pagination.pages}}</span>
+            <button class="btn btn-sm btn-link" ng-click="loadPage(pagination.page + 1)"
+                    ng-disabled="pagination.page == pagination.pages">
+                <i class="fa fa-forward"></i>
+            </button>
+            <button class="btn btn-sm btn-link" ng-click="loadPage(pagination.pages)"
+                    ng-disabled="pagination.page == pagination.pages">
+                <i class="fa fa-fast-forward"></i>
+            </button>
+        </div>
+        <div class="col-sm-6 wrapper-xs text-right">
+            <div style="line-height: 30px">共{{result.total}}条数据，每页显示
+                <select class="form-control input-sm inline" style="width:65px;" ng-change="reload()"
+                        ng-model="pagination.size">
+                    <option value="20">20</option>
+                    <option value="50">50</option>
+                    <option value="100">100</option>
+                    <option value="200">200</option>
+                </select>
+                条
+            </div>
+        </div>
+        <div class="clearfix"></div>
+    </div>
+    <div class="wrapper-xl text-center" ng-show="error">
+        <i class="iconfont icon-error"></i>
+        <p class="m-t-md">加载失败：{{error}}</p>
+    </div>
+</div>

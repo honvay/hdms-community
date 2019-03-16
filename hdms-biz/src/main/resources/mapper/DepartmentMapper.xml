@@ -1,0 +1,39 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper namespace="com.honvay.hdms.department.mapper.DepartmentMapper">
+    <resultMap id="departmentDto" type="com.honvay.hdms.department.model.DepartmentDto">
+        <id property="id" column="id" javaType="INTEGER"/>
+        <result property="name" jdbcType="VARCHAR" column="name"/>
+        <result property="code" jdbcType="VARCHAR" column="code"/>
+        <result property="orderNo" jdbcType="INTEGER" column="orderNo"/>
+        <association property="parent" javaType="com.honvay.hdms.department.model.DepartmentDto">
+            <id property="id" column="parent_id" javaType="INTEGER"/>
+            <result property="name" jdbcType="VARCHAR" column="parent_name"/>
+            <result property="code" jdbcType="VARCHAR" column="parent_code"/>
+        </association>
+    </resultMap>
+    <select id="findFullByParent" resultMap="departmentDto">
+        select t.id       as id,
+               t.name     as name,
+               t.code     as code,
+               t.order_no as orderNo,
+               p.id       as parent_id,
+               p.name     as parent_name,
+               p.code     as parent_code
+        from hdms_department t
+                 left join hdms_department p on p.id = t.parent
+        where t.parent = #{parent}
+    </select>
+    <select id="getFullById" resultMap="departmentDto">
+        select t.id       as id,
+               t.name     as name,
+               t.code     as code,
+               t.order_no as orderNo,
+               p.id       as parent_id,
+               p.name     as parent_name,
+               p.code     as parent_code
+        from hdms_department t
+                 left join hdms_department p on p.id = t.parent
+        where t.id = #{id}
+    </select>
+</mapper>

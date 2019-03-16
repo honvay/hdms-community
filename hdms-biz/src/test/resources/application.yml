@@ -1,0 +1,42 @@
+spring:
+  profiles:
+    active: dev
+  messages:
+    basename: org/springframework/security/messages
+  thymeleaf:
+    cache: false
+  datasource:
+    driver-class-name: com.mysql.jdbc.Driver
+    url: jdbc:mysql://localhost:3306/hdms-enterprise?useUnicode=true&characterEncoding=utf8&serverTimezone=UTC
+    username: root
+    password: root
+    initialization-mode: always
+  jpa:
+    hibernate:
+      ddl-auto: none
+  jackson:
+    date-format: yyyy-MM-dd HH:mm:ss
+hdms:
+  mapping:
+    defaultFileIcon: asset/img/doc_default.png
+    publicDirectoryIcon: asset/img/public_folder.png
+    privateDirectoryIcon: asset/img/private_folder.png
+    mappings:
+      doc:
+        icon: asset/img/doc.png
+        category: doc
+      docx:
+        icon: asset/img/doc.png
+        category: doc
+
+
+mybatis-plus:
+  mapper-locations: classpath:mapper/*.xml
+  global-config:
+    db-config:
+      id-type: auto
+logging:
+  level:
+    com.honvay: debug
+server:
+  port: 8090

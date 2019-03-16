@@ -1,0 +1,124 @@
+<div class="app-ctrl">
+    <!-- main header -->
+    <div class="bg-light lter b-b wrapper-md app-title-fixed">
+        <div class="row">
+            <div class="col-sm-6 col-xs-12">
+                <h1 class="m-n font-thin h3 text-black">控制台首页</h1>
+            </div>
+        </div>
+    </div>
+    <!-- / main header -->
+    <div class="wrapper-md">
+        <!-- stats -->
+        <div class="row row-sm text-center">
+            <div class="col-xs-3">
+                <div class="panel padder-v item">
+                    <div class="h1 text-primary font-thin h1">
+                        {{report.totalSize | formatSize}}
+                    </div>
+                    <span class="text-muted text-xs">总使用量</span>
+                </div>
+            </div>
+            <div class="col-xs-3">
+                <div href class="block panel padder-v  item">
+                <span class="text-primary font-thin h1 block">
+                	{{report.totalFile}}
+				</span>
+                    <span class="text-muted text-xs">文件总数</span>
+                </div>
+            </div>
+            <div class="col-xs-3">
+                <div href class="block panel padder-v  item">
+                <span class="text-primary font-thin h1 block">
+                	{{report.totalUser}}
+				</span>
+                    <span class="text-muted text-xs">用户总数</span>
+                </div>
+            </div>
+            <div class="col-xs-3">
+                <div href class="block panel padder-v  item">
+                <span class="text-primary font-thin h1 block">
+                	{{report.totalDepartment}}
+				</span>
+                    <span class="text-muted text-xs">部门总数</span>
+                </div>
+            </div>
+        </div>
+        <!-- / stats -->
+        <!-- tasks -->
+
+        <div class="row row-sm">
+            <div class="col-md-6  b-light ">
+                <div class="panel wrapper">
+                    <h4 class="font-thin m-t-none m-b-md ">磁盘统计</h4>
+                    <div class="row row-sm">
+                        <div class="col-xs-4 text-center" ng-repeat="space in report.spaces">
+                            <div ui-jq="easyPieChart" ui-options="{
+                                    percent: {{getPercent(space)}},
+                                    lineWidth: 4,
+                                    trackColor: '#e8eff0',
+                                    barColor: '{{getColor(space)}}',
+                                    scaleColor: false,
+                                    size: 115,
+                                    lineCap: 'butt'
+                                  }" class="inline m-t">
+                                <div>
+                                    <span class="text-primary h4">{{getPercent(space)}}%</span>
+                                </div>
+                            </div>
+                            <div class="text-muted  m-t m-b"><b>{{space.name}}</b>
+                                <div class="m-t-xs text-xs">{{space.used | formatSize}}/{{space.total | formatSize}}</div>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+            <div class="col-md-6  b-light ">
+                <div class="panel wrapper">
+                    <h4 class="font-thin m-t-none m-b-md ">快速导航</h4>
+                    <div class=" m-b">
+                        <div class="m-b" ui-sref-active="active">
+                            <span class="label text-base bg-primary pos-rlt m-r text-white">
+                            <i class="arrow right arrow-primary"></i>首页</span>
+                            <a href="#/organization" class="auto" ui-sref="index">首页</a>
+                        </div>
+                        <div class="m-b" ui-sref-active="active">
+                            <span class="label text-base bg-primary pos-rlt m-r text-white">
+                            <i class="arrow right arrow-primary"></i>组织架构</span>
+                            <a href="#/organization" class="auto" ui-sref="department">组织结构</a>
+                        </div>
+                        <div class="m-b">
+                            <span class="label text-base bg-primary pos-rlt m-r text-white">
+                            <i class="arrow right arrow-primary"></i>安全管理</span>
+                            <a href="#/security/permission" ui-sref="security.permission">
+                                <span>权限设置</span>
+                            </a>
+                            <a href="#/security/login/log" ui-sref="security.loginLog">
+                                <span>登录日志</span>
+                            </a>
+                            <a href="#/security/activity" ui-sref="security.activity">
+                                <span>操作日志</span>
+                            </a>
+                        </div>
+                        <div class="m-b">
+                            <span class="label text-base bg-primary pos-rlt m-r text-white">
+                            <i class="arrow right arrow-primary"></i>系统管理</span>
+                            <a href="#/sys/setting" ui-sref="sys.setting">
+                                <span>系统设置</span>
+                            </a>
+                            <a href="#/sys/notice" ui-sref="sys.notice">
+                                <span>系统通知</span>
+                            </a>
+                        </div>
+                        <div class="m-b" ui-sref-active="active">
+                            <span class="label text-base bg-primary pos-rlt m-r text-white">
+                            <i class="arrow right arrow-primary"></i>退出</span>
+                            <a href="/index" class="auto">退出</a>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+        <!-- / tasks -->
+    </div>
+</div>

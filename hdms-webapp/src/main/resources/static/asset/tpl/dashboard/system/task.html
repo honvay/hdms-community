@@ -1,0 +1,112 @@
+<div ng-controller="TaskManagerCtrl" class="app-ctrl">
+	<div class="bg-light lter b-b wrapper-md app-title-fixed">
+		<div class="row">
+			<div class="col-sm-6 col-xs-5">
+				<h1 class="m-n font-thin h3" style="line-height: 34px;">任务管理</h1>
+			</div>
+			<div class="col-sm-6 col-xs-7" style="text-align: right;">
+				<!-- <button class="btn btn-primary" ng-click="add()">添加</button> -->
+				<!-- <div class="btn-group" dropdown is-open="status.isopen">
+					<button type="button" class="btn btn-primary" dropdown-toggle>
+						操作&nbsp;<span class="caret"></span>
+					</button>
+					<ul class="dropdown-menu" role="menu">
+						<li><a href>本地存储</a></li>
+						<li><a href>启动</a></li>
+						<li><a href>禁用</a></li>
+						<li><a href>立即执行</a></li>
+						<li><a href>导入任务</a></li>
+					</ul>
+				</div> -->
+				<button class="btn btn-primary" ng-disabled="status.syncing == true"
+					ng-click="sync()">{{status.syncText}}</button>
+				<button class="btn btn-minor" ng-click="load()">刷新</button>
+				<!-- <button class="btn btn-danger" ng-disabled="!selected"
+					ng-click="remove()">删除</button> -->
+			</div>
+		</div>
+	</div>
+	<div class="wrapper-sm app-inner bg-light lter">
+				<div class="table-responsive h-full" ng-show="!status.loading">
+					<table class="table table-hover b-b">
+						<thead>
+							<tr>
+								<th ng-click="title='name';desc=!desc" width="20%">
+									任务名称
+								 	<i ng-show="title == 'name'" ng-class="{'fa-caret-up' : desc,'fa-caret-down':!desc}" class="fa"> </i>
+								</th>
+								<th ng-click="title='cronExpression';desc=!desc" width="20%">执行时间 <i
+									ng-show="title == 'cronExpression'"
+									ng-class="{'fa-caret-up' : desc,'fa-caret-down':!desc}"
+									class="fa"> </i>
+								</th>
+								<th ng-click="title='nextExecuteDate';desc=!desc" width="20%">下次运行时间 <i
+									ng-show="title == 'nextExecuteDate'"
+									ng-class="{'fa-caret-up' : desc,'fa-caret-down':!desc}"
+									class="fa"> </i>
+								</th>
+								<th ng-click="title='status';desc=!desc" width="10%">状态 <i
+									ng-show="title == 'status'"
+									ng-class="{'fa-caret-up' : desc,'fa-caret-down':!desc}"
+									class="fa"> </i>
+								</th>
+								<th  width="10%">是否启用</th>
+								<th  width="20%">操作</th>
+							</tr>
+						</thead>
+						<tbody>
+							<tr>
+								<th>
+									<input type="text" class="input-sm form-control" placeholder="" ng-model="condition.name">
+								</th>
+								<th>
+									<input type="text" class="input-sm  form-control" placeholder="" ng-model="condition.cronExpression">
+								</th>
+								<th >
+									<div class="input-group">
+									 <input type="text" class="form-control input-sm" datepicker-popup="yyyy-MM-dd" ng-model="condition.nextExecuteDate"  is-open="opened"  datepicker-options="{formatYear: 'yyyy',class:'datepicker'}" ng-required="true" close-text="关闭" current-text="今天" clear-text="清除" />
+									 <span class="input-group-btn">
+						                <button type="button" class="btn btn-sm btn-default" ng-click="open($event)"><i class="glyphicon glyphicon-calendar"></i></button>
+						              </span>
+						              </div>
+								</th>
+								<th>
+									<select  class="input-sm form-control" ng-model="condition.status">
+										<option></option>
+										<option value="0">执行完成</option>
+										<option value="1">正在执行</option>
+										<option value="2">执行异常</option>
+										<option value="3">准备执行</option>
+									</select>
+								</th>
+								<th>
+									<select  class="input-sm form-control" ng-model="condition.enable">
+										<option></option>
+										<option value="0">是</option>
+										<option value="1">否</option>
+									</select>
+								</th>
+								<th></th>
+							</tr>
+							<tr
+								ng-repeat="task in tasks | filter:{name:condition.name,cronExpression:condition.cronExpression,nextExecuteDate:condition.nextExecuteDate,status:condition.status,enable:condition.enable}  | orderBy: title : desc"
+								valign="middle">
+								<td style="padding-top: 12px;">{{task.name}}</td>
+								<td style="padding-top: 12px;">{{task.cronExpression}}</td>
+								<td style="padding-top: 12px;">{{task.nextExecuteDate}}</td>
+								<td style="padding-top: 12px;">{{task.status |
+									translate:'system.task.status'}}</td>
+								<td style="padding-top: 12px;">{{task.enable |
+									translate:'common.YN'}}</td>
+								<td>
+									<button class="btn btn-default btn-sm" ng-show="task.enable == false">启用</button>
+									<button class="btn btn-default btn-sm" ng-show="task.enable == true">禁用</button>
+									<button class="btn btn-default btn-sm" ng-show="task.status != 1">执行</button> 
+									<!-- <button class="btn btn-default btn-sm">详情</button> -->
+								</td>
+							</tr>
+						</tbody>
+					</table>
+				</div>
+			</div>
+		</div>

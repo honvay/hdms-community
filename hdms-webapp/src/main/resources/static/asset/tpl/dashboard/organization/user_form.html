@@ -1,0 +1,80 @@
+<div class="m-c">
+    <div class="modal-header">
+        <h4 class="modal-title">用户 - {{operation}}</h4>
+    </div>
+    <div class="modal-body wrapper-md">
+        <div class="row">
+            <div class="col-sm-12">
+                <form name="userForm" class="form-horizontal form-validation">
+                    <div class="form-group">
+                        <label class="col-sm-3 control-label required">用户名</label>
+                        <div class="col-sm-9">
+                            <input type="text" name="name" ng-model="user.username" required class="form-control">
+                        </div>
+                    </div>
+                    <div class="form-group">
+                        <label class="col-sm-3 control-label required">姓名</label>
+                        <div class="col-sm-9">
+                            <input type="text" name="name" ng-model="user.name" required ng-minlength="2"
+                                   class="form-control">
+                        </div>
+                    </div>
+                    <div class="form-group">
+                        <label class="col-sm-3 control-label required">邮箱</label>
+                        <div class="col-sm-9">
+                            <input type="email" name="email" ng-model="user.email" class="form-control">
+                        </div>
+                    </div>
+                    <div class="form-group">
+                        <label class="col-sm-3 control-label">手机号</label>
+                        <div class="col-sm-9">
+                            <input type="text" name="phoneNumber" ng-model="user.phoneNumer" class="form-control">
+                        </div>
+                    </div>
+                    <div class="form-group">
+                        <label class="col-sm-3 control-label required">所属部门</label>
+                        <div class="col-sm-9">
+                            <div class="input-group" dropdown is-open="openTree" dropdown-toggle>
+                                <input type="text" required ng-model="user.departmentName"   readonly class="form-control">
+                                <div class="input-group-btn">
+                                    <button type="button" class="btn btn-default dropdown-toggle" >
+                                        <span class="caret"></span>
+                                    </button>
+                                </div>
+                                <div class="dropdown-menu w-full">
+                                    <hc-tree tree-control="tree"
+                                             load-asyn="true"
+                                             open-folder-icon="fa fa-users"
+                                             folder-icon="fa fa-users"
+                                             leaf-icon="fa fa-users"
+                                             on-selection-change="onSelect(selection);"
+                                             load-url="/department/list">
+                                    </hc-tree>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                    <div class="form-group" ng-show="result">
+                        <div class="col-sm-12">
+                            <div class="alert alert-danger" style="margin-bottom:0px;" role="alert">{{result.message}}
+                            </div>
+                        </div>
+                    </div>
+                    <div class="form-group">
+                        <div class="col-sm-12">
+                            <div class="alert alert-info" style="margin-bottom:0px;" role="alert">
+                                <b>提示：</b>用户添加后密码为系统设置的默认密码，用户第一次登录之后必须修改密码
+                            </div>
+                        </div>
+                    </div>
+                </form>
+            </div>
+        </div>
+    </div>
+    <div class="modal-footer" style="text-align: right;">
+        <button type="button" class="btn btn-primary" ng-click="save()"
+                ng-disabled="saving=== true || userForm.$invalid || !userForm.$dirty">保存
+        </button>
+        <button type="button" class="btn btn-default" ng-click="cancel()">取消</button>
+    </div>
+</div>

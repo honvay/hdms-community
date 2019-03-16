@@ -1,0 +1,135 @@
+<div ng-controller="LoginLogCtrl" class="app-ctrl" style="padding-top: 94px;padding-bottom: 42px;">
+    <div class="bg-light b-b app-title-fixed">
+        <div class="col-sm-12 wrapper-sm col-xs-12 b-b">
+				<span class="text-md">
+					<i class="glyphicon glyphicon-list-alt"></i>
+					登录日志
+				</span>
+        </div>
+        <div class="col-sm-12 wrapper-sm lter col-xs-12">
+            <iframe class="hidden" name="exportIframe"></iframe>
+            <form id="conditionForm" class="form-inline text-xs" target="exportIframe" action="/login/log/export">
+                <div class="form-group m-r-xs ">
+                    <label>时间：</label>
+                    <input type="text" name="start" class="form-control input-sm" ng-click="startOpended = true"
+                           date-format="YYYY-MM-DD" ng-model="condition.start" datepicker-popup="yyyy-MM-dd"
+                           is-open="startOpended"
+                           style="width:100px;"
+                           datepicker-options="{formatYear: 'yyyy',class:'datepicker',showWeeks:false}" close-text="关闭"
+                           current-text="今天" clear-text="清除"/>
+                    -
+                    <input type="text" name="end" class="form-control input-sm" date-format="YYYY-MM-DD"
+                           ng-click="endOpened = true" ng-model="condition.end" datepicker-popup="yyyy-MM-dd"
+                           is-open="endOpened"
+                           style="width:100px;"
+                           datepicker-options="{formatYear: 'yyyy',class:'datepicker',showWeeks:false}" close-text="关闭"
+                           current-text="今天" clear-text="清除"/>
+                </div>
+                <div class="form-group m-r-xs text-xs">
+                    <label>姓名：</label>
+                    <input type="text" name="name" style="width:120px;" class="form-control input-sm" id="operator"
+                           ng-model="condition.name">
+                </div>
+                <div class="form-group m-r-xs text-xs">
+                    <label>用户名：</label>
+                    <input type="text" name="username" style="width:120px;" class="form-control input-sm" id="operator"
+                           ng-model="condition.username">
+                </div>
+                <div class="pull-right">
+                    <button type="button" class="btn btn-sm btn-default" ng-click="reload()">
+                        <i class='glyphicon glyphicon-search'></i>
+                        搜索
+                    </button>
+                    <button type="button" class="btn btn-sm btn-default" onclick="$('#conditionForm').submit();">
+                        <i class='glyphicon glyphicon-export'></i>
+                        导出
+                    </button>
+                </div>
+            </form>
+        </div>
+    </div>
+    <div class="app-inner bg-light lter" ng-show="!error">
+        <div class="table-responsive h-full" ng-show="result.total > 0 && !loading">
+            <table class="table table-hover b-b">
+                <thead>
+                <tr>
+                    <th width="20%">
+                        用户名
+                    </th>
+                    <th width="20%">
+                        姓名
+                    </th>
+                    <th width="15%">
+                        登录时间
+                    </th>
+                    <th width="15%">
+                        登录IP
+                    </th>
+                    <th width="15%">
+                        UserAgent
+                    </th>
+                    <th width="15%">客户端</th>
+                </tr>
+                </thead>
+                <tbody>
+                <tr ng-repeat="log in result.records" valign="middle">
+                    <td>{{log.username}}</td>
+                    <td>{{log.name}}</td>
+                    <td>{{log.loginDate}}</td>
+                    <td>{{log.loginIp}}</td>
+                    <td class="text-ellipsis">{{log.userAgent}}</td>
+                    <td>{{log.client}}</td>
+                </tr>
+                </tbody>
+            </table>
+        </div>
+        <div class="wrapper-xl text-center" ng-show="loading">
+            <img ng-src="{{'asset/img/loading.gif' | resource}}"/>
+            <p class="m-t-sm">正在加载</p>
+        </div>
+        <div class="wrapper-xl text-center" ng-show="result.total == 0 && !loading">
+            <i class="iconfont icon-empty"></i>
+            <p class="m-t-md">没有查找到数据</p>
+        </div>
+    </div>
+    <div class="pos-abt w-full b-t" style="bottom:0px" ng-show="!error && result.total > 0 && !loading">
+        <div class="col-sm-6 wrapper-xs">
+            <button class="btn btn-sm btn-link" ng-click="loadPage(1)" ng-disabled="pagination.page == 1">
+                <i class="fa fa-fast-backward"></i>
+            </button>
+            <button class="btn btn-sm btn-link" ng-click="loadPage(pagination.page - 1)"
+                    ng-disabled="pagination.page == 1">
+                <i class="fa fa-backward"></i>
+            </button>
+            <input class="inline form-control input-sm" style="width: 30px" ng-model-options="{ updateOn: 'blur' }"
+                   ng-change="onPageChange();" ng-model="pagination.page"/>
+            /
+            <span>{{pagination.pages}}</span>
+            <button class="btn btn-sm btn-link" ng-click="loadPage(pagination.page + 1)"
+                    ng-disabled="pagination.page == pagination.pages">
+                <i class="fa fa-forward"></i>
+            </button>
+            <button class="btn btn-sm btn-link" ng-click="loadPage(pagination.pages)"
+                    ng-disabled="pagination.page == pagination.pages">
+                <i class="fa fa-fast-forward"></i>
+            </button>
+        </div>
+        <div class="col-sm-6 wrapper-xs text-right">
+            <div style="line-height: 30px">共{{result.total}}条数据，每页显示
+                <select class="form-control input-sm inline" style="width:65px;" ng-change="reload()"
+                        ng-model="pagination.size">
+                    <option value="20">20</option>
+                    <option value="50">50</option>
+                    <option value="100">100</option>
+                    <option value="200">200</option>
+                </select>
+                条
+            </div>
+        </div>
+        <div class="clearfix"></div>
+    </div>
+    <div class="wrapper-xl text-center" ng-show="error">
+        <i class="iconfont icon-error"></i>
+        <p class="m-t-md">加载失败：{{error}}</p>
+    </div>
+</div>

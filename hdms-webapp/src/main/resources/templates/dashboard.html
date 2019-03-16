@@ -1,0 +1,147 @@
+<!DOCTYPE html>
+<html lang="zh_CN">
+<head>
+    <meta charset="utf-8"/>
+    <title>瀚为云文档协作平台 - 控制台 </title>
+    <meta http-equiv="cache-control" content="no-cache">
+    <meta name="viewport" content="width=device-width, initial-scale=1, maximum-scale=1"/>
+    <link rel="stylesheet" href="/asset/dist/css/basic.min.css" type="text/css"/>
+    <link rel="stylesheet" href="/asset/dist/css/control.min.css" type="text/css"/>
+    <link rel="stylesheet" href="/asset/dist/css/dashboard.min.css" type="text/css"/>
+    <link rel="shortcut icon" href="/asset/img/logo_60_blue.png" media="screen"/>
+</head>
+<body ng-controller="DashboardCtrl">
+<toaster-container toaster-options="{'position-class': 'toast-top-right', 'close-button':true}"></toaster-container>
+
+<div class="app" id="app">
+    <!-- navbar -->
+    <div class="app-header navbar">
+        <!-- navbar header -->
+        <div class="navbar-header bg-primary">
+            <button class="pull-right visible-xs"> <!--ui-toggle-class="show" data-target=".navbar-collapse"-->
+                <i class="glyphicon glyphicon-log-out"></i>
+            </button>
+            <button class="pull-right visible-xs" ui-toggle-class="off-screen" data-target=".app-aside" ui-scroll="app">
+                <i class="glyphicon glyphicon-align-justify"></i>
+            </button>
+            <a href="#/" class="navbar-brand text-lt visible-xs" style="text-align: left;">
+                <span class="hidden-folded m-l-xs"><img src="/asset/img/logo_100.png"
+                                                        style="max-width: 30px;max-height: 30px;margin-right:10px;">控制台</span>
+            </a>
+        </div>
+        <!-- / navbar header -->
+
+        <!-- navbar collapse -->
+        <div class="collapse pos-rlt navbar-collapse box-shadow bg-primary"
+             style="padding-left:0px;margin-left:0px;padding-right:0px;">
+            <a href="#/" class="navbar-brand text-lt">
+		          <span class="hidden-folded m-l-xs">
+                      <img src="/asset/img/logo_100.png" style="max-width: 30px;max-height: 30px;margin-right:10px;">
+		          瀚为云文档协作平台 - 控制台</span>
+            </a>
+        </div>
+        <!-- / navbar collapse -->
+    </div>
+    <!-- / navbar -->
+
+    <!-- menu -->
+    <div class="app-aside bg-primay-light h-full b-r">
+        <nav ui-nav class="navi">
+            <!-- findByDocumentId -->
+            <ul class="nav">
+                <li ng-class="{active:$state.includes('app.table')}">
+                    <a ui-sref="/index" class="auto">
+                        <i class="glyphicon glyphicon-home"></i>
+                        <span>控制台首页</span>
+                    </a>
+                </li>
+                <li ng-class="{active:$state.includes('organization')}">
+                    <a class="auto" ui-sref="organization">
+                        <i class="fa fa-group"></i>
+                        <span>组织架构</span>
+                    </a>
+                </li>
+                <li ng-class="{active:$state.includes('security')}">
+                    <a href class="auto">
+      <span class="pull-right text-muted">
+        <i class="fa fa-fw fa-angle-right text"></i>
+        <i class="fa fa-fw fa-angle-down text-active"></i>
+      </span>
+                        <i class="fa fa-shield icon"></i>
+                        <span>安全管理</span>
+                    </a>
+                    <ul class="nav nav-sub dk">
+                        <li ui-sref-active="active">
+                            <a ui-sref="security.permission">
+                                <span>权限配置</span>
+                            </a>
+                        </li>
+                        <li ui-sref-active="active">
+                            <a ui-sref="security.loginLog">
+                                <span>登录日志</span>
+                            </a>
+                        </li>
+                        <li ui-sref-active="active">
+                            <a ui-sref="security.activity">
+                                <span>操作日志</span>
+                            </a>
+                        </li>
+                    </ul>
+                </li>
+                <li>
+                    <a href class="auto">
+      <span class="pull-right text-muted">
+        <i class="fa fa-fw fa-angle-right text"></i>
+        <i class="fa fa-fw fa-angle-down text-active"></i>
+      </span>
+                        <i class="fa fa-gears"></i>
+                        <span>系统管理</span>
+                    </a>
+                    <ul class="nav nav-sub dk">
+                        <li ui-sref-active="active">
+                            <a ui-sref="sys.setting">
+                                <span>系统设置</span>
+                            </a>
+                        </li>
+                        <li ui-sref-active="active">
+                            <a ui-sref="sys.notice">
+                                <span>系统通知</span>
+                            </a>
+                        </li>
+                    </ul>
+                </li>
+                <li>
+                    <a href="/index" class="auto">
+                        <i class="glyphicon glyphicon-log-out"></i>
+                        <span>退出</span>
+                    </a>
+                </li>
+            </ul>
+            <!-- / findByDocumentId -->
+        </nav>
+    </div>
+    <!-- / menu -->
+
+    <!-- content -->
+    <div class="app-content">
+        <div ui-butterbar></div>
+        <a href class="off-screen-toggle hide" ui-toggle-class="off-screen" data-target=".app-aside"></a>
+        <div class="app-content-body fade-in-up" ui-view style="padding-bottom:50px;"></div>
+    </div>
+</div>
+<script th:inline="javascript">
+    /*<![CDATA[*/
+
+    var crsf = {
+        parameterName: [[${_csrf.parameterName}]],
+        headerName: [[${_csrf.headerName}]],
+        token: [[${_csrf.token}]]
+    };
+    var user = [[${user}]];
+    /*]]>*/
+</script>
+<script src="/asset/dist/js/basic.min.js"></script>
+<script src="/asset/dist/js/module.min.js"></script>
+<script src="/asset/src/require.js" data-main="asset/src/dashboard/dashboard.main.js"></script>
+</body>
+</html>

@@ -1,0 +1,893 @@
+<div class="app-ctrl" style="padding-top:90px;overflow: hidden" ng-show="!error">
+    <div class="b-b app-title-fixed padder">
+        <div class="row wrapper-xs  b-b bg-light">
+            <div class="col-sm-10 col-xs-10 padder-sm file-path" ui-sref-active="active">
+                <a ng-if="mountAlias == 'enterprise'" ui-sref='directory({directory:"enterprise"})'>
+                    <i class="fa fa-users  "></i>
+                    <span>企业文档</span>
+                    <i ng-if="current" class="fa fa-angle-right"></i>
+                </a>
+                <a ng-if="mountAlias == 'my'" ui-sref='directory({directory:"my"})'>
+                    <i class="fa fa-user "></i>
+                    <span>我的文档</span>
+                    <i ng-if="current" class="fa fa-angle-right"></i>
+                </a>
+                <a ng-repeat="document in path" ui-sref='directory({directory:document.id})'>
+                    <i class="fa fa-folder "></i>
+                    <span>{{document.name}}</span>
+                    <i class="fa fa-angle-right"></i>
+                </a>
+                <a ng-if="current" ng-click="showDirectoryContextMenu(current,$event)">
+                    <i class="fa fa-folder"></i>
+                    <span>{{current.name}}</span>
+                    <i class="fa fa-angle-down "></i>
+                </a>
+                <span class="text-sm m-l-xs" ng-show="files.length > 0">
+					( <span ng-show="selection.length > 0">{{selection.length}} / </span>{{files.length}} )
+				</span>
+            </div>
+            <div class="col-sm-2 col-xs-2 text-right " style="padding-left: 0px;padding-right: 5px;">
+                <div class="pull-right">
+                    <button ng-if="mode == 'list'" class="btn btn-md btn-default" ng-click="switchMode()"
+                            tooltip="切换到图标视图" tooltip-placement="bottom">
+                        <i class="glyphicon glyphicon-th-large"></i>
+                    </button>
+                    <button ng-if="mode == 'block'" class="btn btn-md btn-default" ng-click="switchMode()"
+                            tooltip="切换到列表视图" tooltip-placement="bottom">
+                        <i class="glyphicon glyphicon-menu-hamburger"></i>
+                    </button>
+                    <button ng-if="showTags" class="btn btn-md  btn-default" ng-click="switchShowTag()" tooltip="隐藏标签"
+                            tooltip-placement="bottom">
+                        <i class="fa fa-tags"></i>
+                    </button>
+                    <button ng-if="!showTags" class="btn btn-md btn-default" ng-click="switchShowTag()" tooltip="显示标签"
+                            tooltip-placement="bottom">
+                        <i class="fa fa-tags"></i>
+                    </button>
+                    <div class="btn-group" dropdown is-open="openSortmenu">
+                        <button type="button" class="btn btn-md btn-default" ng-click="changeDesc();">
+                            <i ng-class="{'fa-long-arrow-down' : sortDesc,'fa-long-arrow-up':!sortDesc}" class="fa"></i>
+                            <span ng-show="sortField == 'name'">名称</span>
+                            <span ng-show="sortField == 'size'">大小</span>
+                            <span ng-show="sortField == 'creationBy.name'">创建者</span>
+                            <span ng-show="sortField == 'updateDate'">时间</span>
+                        </button>
+                        <button type="button" class="btn btn-md btn-default dropdown-toggle"
+                                dropdown-toggle>
+                            <span class="caret"></span>
+                        </button>
+                        <ul class="dropdown-menu" role="menu"
+                            style="left: inherit; right: 0px;">
+                            <li><a href ng-click="changeSort('name')"> 名称 </a></li>
+                            <li><a href ng-click="changeSort('size')"> 大小 </a></li>
+                            <li><a href ng-click="changeSort('creationBy.name')"> 创建者 </a></li>
+                            <li><a href ng-click="changeSort('updateDate')"> 时间 </a></li>
+                        </ul>
+                    </div>
+                    <button ng-if="current" class="btn btn-md btn-default" ng-click="toggleDetail()"
+                            tooltip="切换详情" tooltip-placement="bottom">
+                        <i class="glyphicon glyphicon-list"></i>
+                    </button>
+                </div>
+            </div>
+        </div>
+        <div class="row wrapper-xs bg-light lter">
+            <div class="col-sm-10 col-xs-10 padder-sm">
+                <div id="filePicker" class="btn  btn-primary" ng-show="ie9 && checkPermission('upload')"></div>
+                <button class="btn  btn-primary" onclick="Util.openSelectFileDialog('#uploadFile')" ng-if="!ie9 "
+                        ng-show="checkPermission('upload')">
+                    <i class="glyphicon glyphicon-cloud-upload"></i> 上传
+                </button>
+                <button class="btn  btn-primary" ng-show="checkPermission('create')" ng-click="createDirectory()">
+                    <i class="glyphicon glyphicon-plus"></i> 新建
+                </button>
+                <button class="btn  btn-default" ng-click="showAuthorizer()"
+                        ng-show="selection.length == 1 && canEditPermission(selection[0])">
+                    <i class="fa fa-users"></i> 协作者
+                </button>
+                <button class="btn  btn-default" ng-if="checkPermission('download')" ng-click="download()"
+                        ng-show="selection.length == 1">
+                    <i class="glyphicon glyphicon-cloud-download"></i> 下载
+                </button>
+                <button class="btn  btn-default" ng-show="selection.length > 0" ng-click="sendFile(selection);">
+                    <i class="fa fa-paper-plane"></i> 发送
+                </button>
+                <button class="btn  btn-default"
+                        ng-show="selection.length == 1 && !selection[0].favoriteId"
+                        ng-click="addFavorite(selection[0],$event)">
+                    <i class="fa fa-star"></i> 收藏
+                </button>
+                <button class="btn  btn-default"
+                        ng-show="selection.length == 1 && selection[0].favoriteId"
+                        ng-click="removeFavorite(selection[0],$event)">
+                    <i class="fa fa-star-o"></i> 取消收藏
+                </button>
+                <button class="btn  btn-default" ng-if="checkPermission('remove')" ng-click="remove()"
+                        ng-show="selection.length > 0 && lockedSelectionCount == 0">
+                    <i class="glyphicon glyphicon glyphicon-trash"></i> 删除
+                </button>
+                <div class="btn-group" dropdown is-open="moreMenuOpen" ng-show="selection.length > 0">
+                    <button type="button" class="btn  btn-default dropdown-toggle" dropdown-toggle>
+                        <i class="fa fa-angle-down  "></i>&nbsp;更多
+                    </button>
+                    <ul class="dropdown-menu" role="menu">
+                        <li ng-if="checkPermission('rename')" ng-click="rename();" ng-show="selection.length == 1">
+                            <a href> <i class="glyphicon glyphicon-edit"></i>&nbsp;重命名</a>
+                        </li>
+                        <li ng-if="checkPermission('copy')" ng-click="copy()" ng-show="selection.length > 0">
+                            <a href> <i class="glyphicon glyphicon-copy"></i>&nbsp;复制</a>
+                        </li>
+                        <li ng-if="checkPermission('move')" ng-show="selection.length > 0 && isNonLocked()"
+                            ng-click="move()">
+                            <a href> <i class="fa fa-share-square-o "></i>&nbsp;移动</a>
+                        </li>
+                        <li ng-if="checkPermission('lock')" ng-click="lock()"
+                            ng-show="selection.length == 1 && selection[0].type == 'file' && selection[0].locked !== true">
+                            <a href> <i class="fa fa-lock"></i>&nbsp;锁定</a>
+                        </li>
+                        <li ng-if="checkPermission('lock')" ng-click="unlock()"
+                            ng-show="selection.length == 1 && selection[0].locked === true && selection[0].lockedBy.id == user.id">
+                            <a href> <i class="fa fa-unlock"></i>&nbsp;解锁</a>
+                        </li>
+                        <li ng-if="checkPermission('edit')" ng-click="setTag(selection[0])"
+                            ng-show="selection.length == 1">
+                            <a href> <i class="fa fa-tag "></i>&nbsp;标签</a>
+                        </li>
+                        <li ng-if="checkPermission('upload')" ng-click="uploadNewVersion(selection[0])"
+                            ng-show="selection.length == 1 && selection[0].type == 'file'  && isNonLocked()">
+                            <a href> <i class="glyphicon glyphicon-cloud-upload"></i>&nbsp;上传新版本</a>
+                        </li>
+                        <li ng-show="selection.length == 1" ng-click="share()">
+                            <a href> <i class="fa fa-link "></i>&nbsp;链接分享 </a>
+                        </li>
+                    </ul>
+                </div>
+            </div>
+            <div class="col-sm-2 col-xs-2 padder-sm">
+                <div class="input-group-icon directory-search">
+                    <i class="glyphicon glyphicon glyphicon-search input-icon"></i>
+                    <input type="text" ng-model="condition" class="form-control rounded input-sm"
+                           placeholder='搜索"{{driectoryName}}"'>
+                </div>
+            </div>
+        </div>
+    </div>
+    <div class="bg-light lter w-full h-full directory-container" ng-click="onContainerClick();">
+        <div class="table-responsive file-list no-padder h-full directory-content"
+             ng-right-click="showContainerContextMenu($event)"
+             ng-if="mode== 'list'" ng-show="files.length > 0 && !loading">
+            <table class="table b-b b-light lter file-table">
+                <thead>
+                <tr>
+                    <th width="50px"><label class="i-checks i-checks-sm m-b-none" ng-show="!condition">
+                        <input type="checkbox" ng-click="selectAll()"
+                               ng-checked="isSelectAll"><i></i>
+                    </label></th>
+                    <th ng-click="changeSort('name')">名称 <i
+                            ng-show="sortField == 'name'"
+                            ng-class="{'fa-caret-up' : !sortDesc,'fa-caret-down':sortDesc}"
+                            class="fa"> </i>
+                    </th>
+                    <th ng-click="changeSort('size')" width="120px">大小 <i
+                            ng-show="sortField == 'size'"
+                            ng-class="{'fa-caret-up' : !sortDesc,'fa-caret-down':sortDesc}"
+                            class="fa"> </i>
+                    </th>
+                    <th ng-click="changeSort('creationBy.name')" width="200px">创建者
+                        <i ng-show="sortField == 'creationBy.name'"
+                           ng-class="{'fa-caret-up' : !sortDesc,'fa-caret-down':sortDesc}"
+                           class="fa"> </i>
+                    </th>
+                    <th ng-click="changeSort('updateDate')" width="200px">修改时间 <i
+                            ng-show="sortField == 'updateDate'"
+                            ng-class="{'fa-caret-up' : !sortDesc,'fa-caret-down':sortDesc}"
+                            class="fa"> </i>
+                    </th>
+                    <th width="150px"></th>
+                </tr>
+                </thead>
+                <tbody>
+                <tr ng-repeat="file in files|orderBy:sortFields:sortDesc | filter:{name:condition,tags:condition}"
+                    class="file-item hc-item"
+                    ng-class="{true:'active'}[file.selected]"
+                    valign="middle"
+                    ng-right-click="showContextMenu(file,$event)">
+                    <td width="5%">
+                        <label class="i-checks i-checks-sm m-b-none">
+                            <input type="checkbox" ng-checked="file.selected"
+                                   ng-click="select(file,null,$event);"><i></i>
+                        </label>
+                    </td>
+                    <td ng-click="select(file,null)" class="text-ellipsis">
+                        <div class="pos-rlt">
+                            <div class="file-icon-wrapper">
+                                <img class="file-icon" ng-src="{{getIcon(file)}}"/>
+                            </div>
+                            <div class="pos-abt file-locker bg-primary rounded text-white"
+                                 ng-if="file.locked === true"
+                                 tooltip-placement="right" tooltip="{{file.lockedBy.name}}在{{file.lockDate}}锁定">
+                                <i class="fa fa-lock"></i>
+                            </div>
+                            <a ng-click="open(file,$event);" class="pos-rlt" title="{{file.name}}">
+                                {{file.name}}
+                            </a>
+                            <div class="file-tags clearfix" ng-show="showTags && file.tags">
+                                <div class="i-tag" ng-repeat="tag in file.tags.split(',') track by $index">
+                                    <span>{{tag}}</span>
+                                </div>
+                            </div>
+                        </div>
+                    </td>
+                    <td ng-click="select(file,null,$event)">{{file.size | formatSize}}</td>
+                    <td ng-click="select(file,null,$event)">
+                        <img ng-if="file.creationBy" ng-src="{{file.creationBy.avatar | resource}}"
+                             class="img-circle"
+                             style="height:30px;float:left;" alt="...">
+                        <span class="m-l-xs">{{file.creationBy.name}}</span>
+                    </td>
+                    <td ng-click="select(file,null,$event)">{{file.updateDate}}</td>
+                    <td class="text-center" valign="middle" ng-click="select(file,null,$event)">
+                        <i class="file-option-icon glyphicon glyphicon-cloud-download" tooltip="下载"
+                           ng-click="download(file)"></i>
+                        <i class="file-option-icon fa fa-paper-plane" ng-click="sendFile(file)" tooltip="发送"></i>
+                        <i class="file-option-icon fa fa-star" ng-if="file.favoriteId"
+                           ng-click="removeFavorite(file,$event)" tooltip="取消收藏"></i>
+                        <i class="file-option-icon fa fa-star-o" ng-if="!file.favoriteId"
+                           ng-click="addFavorite(file,$event)" tooltip="收藏"></i>
+                        <i class="file-option-icon fa fa-ellipsis-h" tooltip="更多"
+                           ng-click="showContextMenu(file,$event)"></i>
+                    </td>
+                </tr>
+                </tbody>
+            </table>
+        </div>
+        <div ng-if="mode == 'block'" ng-show="files.length > 0 && !loading" class="h-full directory-content"
+             style="padding:15px;"
+             ng-right-click="showContainerContextMenu($event)">
+            <ul class="file-block-list">
+                <li class="file-block pos-rlt"
+                    ng-class="{true:'active'}[file.selected]"
+                    ng-click="select(file,null,$event)"
+                    ng-dblclick="open(file);"
+                    ng-right-click="showContextMenu(file,$event)"
+                    ng-repeat="file in files|orderBy:sortField:sortDesc | filter:{name:condition}">
+                    <img class="file-icon" ng-src="{{getIcon(file)}}">
+                    <div class="pos-abt file-locker bg-primary rounded text-white" ng-if="file.locked === true"
+                         tooltip-placement="right" tooltip="{{file.lockedBy.name}}在{{file.lockeDate}}锁定">
+                        <i class="fa fa-lock"></i>
+                    </div>
+                    <div class="file-name text-ellipsis m-t-sm" title="{{file.name}}" tooltip-placement="bottom">
+                        {{file.name}}
+                    </div>
+                </li>
+            </ul>
+        </div>
+        <div class="wrapper-xl text-center directory-content"
+             ng-show="(files.length == 0 || !files) && !loading">
+            <i class="iconfont icon-empty"></i>
+            <p class="m-t-md">该文件夹中没有文件</p>
+            <button class="btn btn-primary" onclick="Util.openSelectFileDialog('#uploadFile')"
+                    ng-show="checkPermission('upload')">
+                <i class="glyphicon glyphicon-cloud-upload"></i>上传文件
+            </button>
+        </div>
+        <div ng-show="current && openDetail && !loading" class="h-full no-padder b-l directory-detail"
+             style="overflow: auto;">
+            <tabset justified="true" class="tab-container file-tab h-full">
+                <tab heading="详情">
+                    <div class="wrapper-sm text-center b-b">
+                        <img ng-src="{{getIcon(current)}}" style="max-height:80px"/>
+                        <p class="m-t-xs font-bold m-b-none" style="word-break:break-all;">{{current.name}}</p>
+                        <div class=" text-2x m-t-sm">
+                            <i ng-if="current.favoriteId" ng-click="removeFavorite(current,$event);"
+                               class="fa fa-star hover"
+                               tooltip="取消收藏"></i>
+                            <i ng-if="!current.favoriteId" ng-click="addFavorite(current,$event);"
+                               class="fa fa-star-o hover"
+                               tooltip="收藏"></i>
+                            <i class="glyphicon glyphicon-cloud-download m-r-sm hover"
+                               ng-click="download(current,$event)"
+                               ng-show="checkPermission('download')" tooltip="下载"></i>
+                            <i class="fa fa-ellipsis-h m-r-sm hover" tooltip="更多"
+                               ng-click="showDirectoryContextMenu(current,$event)"></i>
+                        </div>
+                    </div>
+                    <div class="wrapper-sm clearfix" style="line-height: 30px;">
+                        <div class="col-sm-3  font-bold no-padder text-right m-t-xs">创建者:</div>
+                        <div class="col-sm-9 m-t-xs">
+                            <img ng-src="{{current.creationBy.avatar | resource}}" class="img-circle"
+                                 style="height:30px;float:left;" alt="...">
+                            <span class="m-l-xs">{{current.creationBy.name}}</span>
+                        </div>
+                        <div class="col-sm-3 font-bold no-padder text-right m-t-xs">创建时间:</div>
+                        <div class="col-sm-9 m-t-xs">{{current.createDate}}</div>
+                        <div class="col-sm-12 m-t-xs">
+                            <div class="i-tag" style="line-height:1.42857143;"
+                                 ng-repeat="tag in current.tags.split(',') track by $index">
+                                <span>{{tag}}</span>
+                            </div>
+                            <span ng-if="!current.tags" class="text-muted">没有设置标签</span>
+                            <i class="fa fa-tag hover" ng-if="checkPermission('edit')" tooltip="设置标签"
+                               ng-click="setTag(current)"></i>
+                        </div>
+                        <div class="col-sm-3 font-bold no-padder text-right m-t-xs">备注：</div>
+                        <div class="col-sm-9 m-t-xs hover-container" ng-if="checkPermission('edit')">
+                            <span class="hover" tooltip="点击编辑备注" ng-show="!descEditing && current.description"
+                                  ng-click="descEditing=true">
+                                {{current.description}}
+                            </span>
+                            <span class="text-muted hover" tooltip="点击编辑备注"
+                                  ng-show="!descEditing && !current.description" ng-click="descEditing = true">
+                                没有备注
+                            </span>
+                            <textarea ng-show="descEditing" ng-model="current.description"
+                                      ng-blur="updateDesc();descEditing=false;" class="form-control m-t-xs"
+                                      rows="5"></textarea>
+                        </div>
+                        <div class="col-sm-9 m-t-xs hover-container" ng-if="!checkPermission('edit')">
+                            <span ng-show="current.description">{{current.description}}</span>
+                            <span class="text-muted" ng-show="!current.description">没有备注</span>
+                        </div>
+                    </div>
+                </tab>
+                <tab ng-if="canShowAuthorizer(current);">
+                    <tab-heading>协作者({{authorizes.length + 1}})</tab-heading>
+                    <div class="m-t-sm m-b-sm text-center" ng-if="canEditPermission(current);">
+                        <button class="btn btn-primary btn-sm" ng-click="addAuthorize()">
+                            <i class="fa fa-user"></i>&nbsp;添加协作者
+                        </button>
+                    </div>
+                    <div class="row m-n">
+                        <div class="col-md-12 permission-item wrapper-sm hover-bg">
+                            <img ng-src="{{user.avatar | resource}}" class="img-circle pull-left" style="height:40px;"
+                                 alt="...">
+                            <div class="inline">
+                                <div class="m-l-sm" style="line-height: 25px;">{{current.creationBy.name}}</div>
+                                <div class="m-l-sm text-xs text-muted" style="line-height: 10px;">
+                                    创建者
+                                </div>
+                            </div>
+                        </div>
+                        <div class="col-md-12 permission-item wrapper-sm hover-bg"
+                             ng-repeat="authorize in authorizes | filter:{ownerType:2}">
+                            <button type="button" class="close"
+                                    ng-if="!authorize.inherited && canEditPermission(current);"
+                                    ng-click="removeAuthorize(authorize,$event)">
+                                <span aria-hidden="true">×</span>
+                            </button>
+                            <img src="asset/img/group.png" class="img-circle pull-left" style="height:40px;" alt="...">
+                            <div class="inline">
+                                <div class="m-l-sm" style="line-height: 25px;">{{authorize.name}}</div>
+                                <div class="m-l-sm text-xs text-muted" style="line-height: 10px;">
+                                    <div class="hover" ng-if="canEditPermission(current);" tooltip="点击修改权限"
+                                         ng-click="showPermissionContextMenu(authorize,$event)">
+                                        {{authorize.permissionName}}<span ng-if="authorize.inherited">(继承)</span>&nbsp;&nbsp;
+                                        <span><i class="fa fa-angle-down "></i></span>
+                                    </div>
+                                    <div class="hover" ng-if="!canEditPermission(current);">
+                                        {{authorize.permissionName}}<span ng-if="authorize.inherited">(继承)</span>&nbsp;&nbsp;
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+                        <div class="col-md-12 permission-item wrapper-sm hover-bg"
+                             ng-repeat="authorize in authorizes | filter:{ownerType:1} ">
+                            <button type="button" class="close"
+                                    ng-if="!authorize.inherited && canEditPermission(current);"
+                                    ng-click="removeAuthorize(authorize,$event)">
+                                <span aria-hidden="true">×</span>
+                            </button>
+                            <img ng-src="{{user.avatar | resource}}" class="img-circle pull-left"
+                                 style="height:40px;" alt="...">
+                            <div class="inline">
+                                <div class="m-l-sm" style="line-height: 25px;">{{authorize.name}}</div>
+                                <div class="m-l-sm text-xs text-muted" style="line-height: 10px;">
+                                    <div class="hover" ng-if="canEditPermission(current);" tooltip="点击修改权限"
+                                         ng-click="showPermissionContextMenu(authorize,$event)">
+                                        {{authorize.permissionName}}<span ng-if="authorize.inherited">(继承)</span>&nbsp;&nbsp;
+                                        <span><i class="fa fa-angle-down "></i></span>
+                                    </div>
+                                    <div ng-if="!canEditPermission(current);">
+                                        {{authorize.permissionName}}<span ng-if="authorize.inherited">(继承)</span>&nbsp;&nbsp;
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                </tab>
+                <tab class="h-full">
+                    <tab-heading>动态({{activities.length}})</tab-heading>
+                    <div class="text-center" ng-if="activities.length == 0 || !activities">
+                        <i class="iconfont icon-empty" style="font-size: 90pt"></i>
+                        <div>暂时没有动态</div>
+                    </div>
+                    <div class="wrapper">
+                        <ul class="timeline">
+                            <li class="tl-item" ng-repeat="act in activities">
+                                <div class="tl-wrap b-primary" style="margin-left: 0px">
+                                    <div class="tl-content panel padder b-a w-md w-auto-xs">
+                                        <span class="arrow left pull-up"></span>
+                                        <div class="text-lt m-b-sm">{{act.operateDate}}</div>
+                                        <div class="panel-body b-t pull-in b-light" style="padding:10px;">
+                                            <div class="media">
+                                                <div class="media-left">
+                                                    <a href="#">
+                                                        <img class="media-object avatar" style="height:40px;"
+                                                             ng-src="{{act.operator.avatar | resource}}" alt="...">
+                                                    </a>
+                                                </div>
+                                                <div class="media-body">
+                                                    <p class="media-heading line-xs l-h">{{act.operator.name}}</p>
+                                                    <div ng-if="act.operation === 'create'">
+                                                        <div class="text-muted">
+                                                            创建了文件夹
+                                                        </div>
+                                                        <div class="text-muted">
+                                                            <a ui-sref='directory({directory:act.document.id})'>
+                                                                <img src="asset/img/public_folder.png"
+                                                                     style="height: 15px">
+                                                                <span style="line-height: 20px;">{{act.document.name}}</span>
+                                                            </a>
+                                                        </div>
+                                                    </div>
+                                                    <div ng-if="act.operation === 'upload'">
+                                                        <div class="text-muted">
+                                                            上传了文件
+                                                        </div>
+                                                        <div class="text-muted text-ellipsis">
+                                                            <a ng-click="open(act.document)"
+                                                               tooltip="{{act.document.name}}">
+                                                                <img ng-src="{{getIcon(act.document)}}"
+                                                                     style="height: 15px">
+                                                                <span style="line-height: 20px;">{{act.document.name}}</span>
+                                                            </a>
+                                                        </div>
+                                                    </div>
+                                                    <div ng-if="act.operation === 'lock'">
+                                                        <div class="text-muted">
+                                                            锁定了文件
+                                                        </div>
+                                                        <div class="text-muted text-ellipsis">
+                                                            <a ng-click="open(act.document)"
+                                                               tooltip="{{act.document.name}}">
+                                                                <img ng-src="{{getIcon(act.document)}}"
+                                                                     style="height: 15px">
+                                                                <span style="line-height: 20px;">{{act.document.name}}</span>
+                                                            </a>
+                                                        </div>
+                                                    </div>
+                                                    <div ng-if="act.operation === 'unlock'">
+                                                        <div class="text-muted">
+                                                            锁定了文件
+                                                        </div>
+                                                        <div class="text-muted text-ellipsis">
+                                                            <a ng-click="open(act.document)"
+                                                               tooltip="{{act.document.name}}">
+                                                                <img ng-src="{{getIcon(act.document)}}"
+                                                                     style="height: 15px">
+                                                                <span style="line-height: 20px;">{{act.document.name}}</span>
+                                                            </a>
+                                                        </div>
+                                                    </div>
+                                                    <div ng-if="act.operation === 'rename'">
+                                                        <div class="text-muted">
+                                                            重命名了文件
+                                                        </div>
+                                                        <div class="text-muted text-ellipsis">
+                                                            <div class="m-t-xs">
+                                                                <a ng-click="open(act.document)"
+                                                                   tooltip="{{act.document.name}}">
+                                                                    <img ng-src="{{getIcon(act.document)}}"
+                                                                         style="height: 15px">
+                                                                    <span style="line-height: 20px;">{{act.document.name}}</span>
+                                                                </a>
+                                                            </div>
+                                                            <div class="m-t-xs">原名：{{act.change.originalName}}</div>
+                                                        </div>
+                                                    </div>
+                                                    <div ng-if="act.operation === 'remove'">
+                                                        <div class="text-muted">
+                                                            删除了文件
+                                                        </div>
+                                                        <div class="text-muted text-ellipsis">
+                                                            <a ng-click="open(act.document)"
+                                                               tooltip="{{act.document.name}}">
+                                                                <img ng-src="{{getIcon(act.document)}}"
+                                                                     style="height: 15px">
+                                                                <span style="line-height: 20px;">{{act.document.name}}</span>
+                                                            </a>
+                                                        </div>
+                                                    </div>
+                                                    <div ng-if="act.operation === 'delete'">
+                                                        <div class="text-muted">
+                                                            彻底删除了文件
+                                                        </div>
+                                                        <div class="text-muted text-ellipsis">
+                                                            <a ng-click="open(act.document)"
+                                                               tooltip="{{act.document.name}}">
+                                                                <img ng-src="{{getIcon(act.document)}}"
+                                                                     style="height: 15px">
+                                                                <span style="line-height: 20px;">{{act.document.name}}</span>
+                                                            </a>
+                                                        </div>
+                                                    </div>
+                                                    <div ng-if="act.operation === 'revert'">
+                                                        <div class="text-muted">
+                                                            恢复了文件
+                                                        </div>
+                                                        <div class="text-muted text-ellipsis">
+                                                            <a ng-click="open(act.document)"
+                                                               tooltip="{{act.document.name}}">
+                                                                <img ng-src="{{getIcon(act.document)}}"
+                                                                     style="height: 15px">
+                                                                <span style="line-height: 20px;">{{act.document.name}}</span>
+                                                            </a>
+                                                        </div>
+                                                    </div>
+                                                    <div ng-if="act.operation === 'moveIn'">
+                                                        <div class="text-muted">
+                                                            移入了文件
+                                                        </div>
+                                                        <div class="text-muted text-ellipsis">
+                                                            <a ng-click="open(act.document)"
+                                                               tooltip="{{act.document.name}}">
+                                                                <img ng-src="{{getIcon(act.document)}}"
+                                                                     style="height: 15px">
+                                                                <span style="line-height: 20px;">{{act.document.name}}</span>
+                                                            </a>
+                                                        </div>
+                                                    </div>
+                                                    <div ng-if="act.operation === 'moveOut'">
+                                                        <div class="text-muted">
+                                                            移出了文件
+                                                        </div>
+                                                        <div class="text-muted text-ellipsis">
+                                                            <a ng-click="open(act.document)"
+                                                               tooltip="{{act.document.name}}">
+                                                                <img ng-src="{{getIcon(act.document)}}"
+                                                                     style="height: 15px">
+                                                                <span style="line-height: 20px;">{{act.document.name}}</span>
+                                                            </a>
+                                                        </div>
+                                                    </div>
+                                                    <div ng-if="act.operation === 'download'">
+                                                        <div class="text-muted">
+                                                            下载了文件
+                                                        </div>
+                                                        <div class="text-muted text-ellipsis">
+                                                            <a ng-click="open(act.document)"
+                                                               tooltip="{{act.document.name}}">
+                                                                <img ng-src="{{getIcon(act.document)}}"
+                                                                     style="height: 15px">
+                                                                <span style="line-height: 20px;">{{act.document.name}}</span>
+                                                            </a>
+                                                        </div>
+                                                    </div>
+                                                    <div ng-if="act.operation === 'addReview'">
+                                                        <div class="text-muted">
+                                                            评论了文件
+                                                        </div>
+                                                        <div class="text-muted text-ellipsis">
+                                                            <div class="m-t-xs">
+                                                                <a ng-click="open(act.document)"
+                                                                   tooltip="{{act.document.name}}">
+                                                                    <img ng-src="{{getIcon(act.document)}}"
+                                                                         style="height: 15px">
+                                                                    <span style="line-height: 20px;">{{act.document.name}}</span>
+                                                                </a>
+                                                            </div>
+                                                            <div class="m-t-xs">
+                                                                {{act.content}}
+                                                            </div>
+                                                        </div>
+                                                    </div>
+                                                    <div ng-if="act.operation === 'removeReview'">
+                                                        <div class="text-muted">
+                                                            删除了文件的评论
+                                                        </div>
+                                                        <div class="text-muted text-ellipsis">
+                                                            <div class="m-t-xs">
+                                                                <a ng-click="open(act.document)"
+                                                                   tooltip="{{act.document.name}}">
+                                                                    <img ng-src="{{getIcon(act.document)}}"
+                                                                         style="height: 15px">
+                                                                    <span style="line-height: 20px;">{{act.document.name}}</span>
+                                                                </a>
+                                                            </div>
+                                                            <div class="m-t-xs">{{act.content}}</div>
+                                                        </div>
+                                                    </div>
+                                                    <div ng-if="act.operation === 'setTags'">
+                                                        <div class="text-muted">
+                                                            设置了文件的标签
+                                                        </div>
+                                                        <div class="text-muted text-ellipsis">
+                                                            <a ng-click="open(act.document)"
+                                                               tooltip="{{act.document.name}}">
+                                                                <img ng-src="{{getIcon(act.document)}}"
+                                                                     style="height: 15px">
+                                                                <span style="line-height: 20px;">{{act.document.name}}</span>
+                                                            </a>
+                                                            <div class="m-t-xs">{{act.tags.currentTags}}</div>
+                                                        </div>
+                                                    </div>
+                                                    <div ng-if="act.operation === 'addAuthorize'">
+                                                        <div class="text-muted text-ellipsis">
+                                                            添加了文件
+                                                            <div>
+                                                                <a ng-click="open(act.document)"
+                                                                   tooltip="{{act.document.name}}">
+                                                                    <img ng-src="{{getIcon(act.document)}}"
+                                                                         style="height: 15px">
+                                                                    <span style="line-height: 20px;">{{act.document.name}}</span>
+                                                                </a>
+                                                            </div>
+                                                            <div class="m-t-xs">的协作者</div>
+                                                        </div>
+                                                        <div class="text-muted">
+                                                            <img ng-src="{{act.authorize.ownerAvatar  || 'asset/img/group.png'}}"
+                                                                 style="height: 20px">
+                                                            <span style="line-height: 20px;">{{act.authorize.ownerName}}({{act.authorize.currentPermission}})</span>
+                                                        </div>
+                                                    </div>
+                                                    <div ng-if="act.operation === 'removeAuthorize'">
+                                                        <div class="text-muted text-ellipsis">
+                                                            删除了文件
+                                                            <div>
+                                                                <a ng-click="open(act.document)"
+                                                                   tooltip="{{act.document.name}}">
+                                                                    <img ng-src="{{getIcon(act.document)}}"
+                                                                         style="height: 15px">
+                                                                    <span style="line-height: 20px;">{{act.document.name}}</span>
+                                                                </a>
+                                                            </div>
+                                                            <div class="m-t-xs">的协作者</div>
+                                                        </div>
+                                                        <div class="text-muted">
+                                                            <img ng-src="{{act.authorize.ownerAvatar || 'asset/img/group.png'}}"
+                                                                 style="height: 20px">
+                                                            <span style="line-height: 20px;">{{act.authorize.ownerName}}({{act.authorize.currentPermission}})</span>
+                                                        </div>
+                                                    </div>
+                                                    <div ng-if="act.operation === 'updateAuthorize'">
+                                                        <div class="text-muted text-ellipsis">
+                                                            修改了文件
+                                                            <div>
+                                                                <a ng-click="open(act.document)"
+                                                                   tooltip="{{act.document.name}}">
+                                                                    <img ng-src="{{getIcon(act.document)}}"
+                                                                         style="height: 15px">
+                                                                    <span style="line-height: 20px;">{{act.document.name}}</span>
+                                                                </a>
+                                                            </div>
+                                                            <p>协作者的权限</p>
+                                                        </div>
+                                                        <div class="text-muted">
+                                                            <div>
+                                                                <img ng-src="{{act.authorize.ownerAvatar  || 'asset/img/group.png'}}"
+                                                                     style="height: 20px">
+                                                                <span style="line-height: 20px;">{{act.authorize.ownerName}}({{act.authorize.currentPermission}})</span>
+                                                            </div>
+                                                            <div class="m-t-xs">
+                                                                原权限：{{act.authorize.originalPermission}}
+                                                            </div>
+                                                        </div>
+                                                    </div>
+                                                    <div ng-if="act.operation === 'updateDesc'">
+                                                        <div class="text-muted text-ellipsis">
+                                                            修改了文件
+                                                            <div>
+                                                                <a ng-click="open(act.document)"
+                                                                   tooltip="{{act.document.name}}">
+                                                                    <img ng-src="{{getIcon(act.document)}}"
+                                                                         style="height: 15px">
+                                                                    <span style="line-height: 20px;">{{act.document.name}}</span>
+                                                                </a>
+                                                            </div>
+                                                            <p>的备注</p>
+                                                        </div>
+                                                        <div class="text-muted">
+                                                            <div class="m-t-xs">
+                                                                现备注：{{act.description.currentDescription}}
+                                                            </div>
+                                                            <div class="m-t-xs">
+                                                                原备注：{{act.description.originalDescription}}
+                                                            </div>
+                                                        </div>
+                                                    </div>
+                                                </div>
+                                            </div>
+                                        </div>
+                                    </div>
+                                </div>
+                            </li>
+                        </ul>
+                    </div>
+                </tab>
+            </tabset>
+        </div>
+        <div class="wrapper-xl text-center" style="flex: 1" ng-show="loading">
+            <img ng-src="{{'asset/img/loading.gif' | resource}}"/>
+            <p class="m-t-sm">正在加载</p>
+        </div>
+    </div>
+</div>
+<div class="wrapper-xl text-center" ng-show="error">
+    <i class="iconfont icon-error"></i>
+    <p class="m-t-md">加载文件夹失败：{{error}}</p>
+</div>
+<ul id="directoryOperationContextMenu" class="dropdown-menu" role="menu">
+    <li ng-show="selected.id != current.id" ng-click="open(selected)">
+        <a tabindex="-1" href="">
+            打开
+        </a>
+    </li>
+    <li>
+        <a tabindex="-1" href="" ng-click="download(selected)">
+            下载
+        </a>
+    </li>
+    <li ng-click="move(selected)">
+        <a tabindex="-1" href="">
+            移动
+        </a>
+    </li>
+    <li ng-click="copy(selected)" ng-show="checkPermission('copy')">
+        <a tabindex="-1" href="">
+            复制
+        </a>
+    </li>
+    <li ng-click="rename(selected)" ng-show="checkPermission('rename')">
+        <a tabindex="-1" href="">
+            重命名
+        </a>
+    </li>
+    <li ng-if="checkPermission('lock')"
+        ng-click="lock(selected)"
+        ng-show="selected.type == 'file' && selected.locked !== true">
+        <a tabindex="-1" href="">
+            锁定
+        </a>
+    </li>
+    <li ng-if="checkPermission('lock')"
+        ng-click="unlock(selected)"
+        ng-show="selected.locked === true && selected.lockedBy.id == user.id">
+        <a tabindex="-1" href="">
+            解锁
+        </a>
+    </li>
+    <li ng-click="uploadNewVersion(selected)" ng-show="selected.type == 'file' && checkPermission('upload')">
+        <a tabindex="-1" href="">
+            上传新版本
+        </a>
+    </li>
+    <li ng-click="remove(selected)" ng-show="checkPermission('remove')">
+        <a tabindex="-1" href="">
+            删除
+        </a>
+    </li>
+    <li ng-if="checkPermission('edit')" ng-click="setTag(selected)">
+        <a href>设置标签</a>
+    </li>
+    <li ng-click="showAuthorizer(selected)" ng-show="canEditPermission(selected)">
+        <a tabindex="-1" href="">
+            协作者
+        </a>
+    </li>
+    <li class="dropdown-submenu">
+        <a tabindex="-1" href="">
+            分享
+            <span class="pull-right m-r-n-md">
+	       	 	<i class="fa fa-fw fa-angle-right text"></i>
+	      	</span>
+        </a>
+        <ul class="dropdown-menu" role="menu" style="left:-100%;">
+            <li ng-click="sendFile(selected)"><a href> 发送给同事 </a></li>
+            <li ng-click="share(selected)">
+                <a href> 链接分享 </a>
+            </li>
+        </ul>
+    </li>
+</ul>
+
+<ul id="containerContextMenu" class="dropdown-menu" role="menu">
+    <li ng-click="createDirectory()" ng-show="checkPermission('create')">
+        <a tabindex="-1" href="">
+            新建
+        </a>
+    </li>
+    <li class="dropdown-submenu"
+        ng-show="supportWebkitDirectory && checkPermission('upload') && checkPermission('create')">
+        <a tabindex="-1" href="">
+            上传
+            <span class="pull-right m-r-n-md">
+	       	 	<i class="fa fa-fw fa-angle-right text"></i>
+	      	</span>
+        </a>
+        <ul class="dropdown-menu" role="menu">
+            <li onclick="Util.openSelectFileDialog('#uploadFile')">
+                <a tabindex="-1" href="">
+                    上传文件
+                </a>
+            </li>
+            <li onclick="Util.openSelectFileDialog('#uploadFile')">
+                <a tabindex="-1" href="">
+                    上传文件夹
+                </a>
+            </li>
+        </ul>
+    </li>
+    <li onclick="Util.openSelectFileDialog('#uploadFile')"
+        ng-if="!supportWebkitDirectory || (checkPermission('upload') && !checkPermission('create'))">
+        <a tabindex="-1" href="">
+            上传
+        </a>
+    </li>
+
+    <li class="dropdown-submenu">
+        <a tabindex="-1" href="">
+            查看
+            <span class="pull-right m-r-n-md">
+	       	 	<i class="fa fa-fw fa-angle-right text"></i>
+	      	</span>
+        </a>
+        <ul class="dropdown-menu" role="menu">
+            <li ng-click="switchMode('list')">
+                <a tabindex="-1" href="">
+                    <i class="fa" ng-class="{true:'fa-dot-circle-o',false:'fa-circle-o'}[mode == 'list']"></i> 列表模式
+                </a>
+            </li>
+            <li ng-click="switchMode('block')">
+                <a tabindex="-1" href="">
+                    <i class="fa" ng-class="{true:'fa-dot-circle-o',false:'fa-circle-o'}[mode == 'block']"></i> 图标模式
+                </a>
+            </li>
+        </ul>
+    </li>
+    <li class="dropdown-submenu">
+        <a tabindex="-1" href="">
+            排序
+            <span class="pull-right m-r-n-md">
+	       	 	<i class="fa fa-fw fa-angle-right text"></i>
+	      	</span>
+        </a>
+        <ul class="dropdown-menu" role="menu">
+            <li ng-click="changeSort('name')">
+                <a tabindex="-1" href="">
+                    <i class="fa" ng-class="{true:'fa-dot-circle-o',false:'fa-circle-o'}[sortField == 'name']"></i> 名称
+                </a>
+            </li>
+            <li ng-click="changeSort('size')">
+                <a tabindex="-1" href="">
+                    <i class="fa" ng-class="{true:'fa-dot-circle-o',false:'fa-circle-o'}[sortField == 'size']"></i> 大小
+                </a>
+            </li>
+            <li ng-click="changeSort('creationBy.name')">
+                <a tabindex="-1" href="">
+                    <i class="fa"
+                       ng-class="{true:'fa-dot-circle-o',false:'fa-circle-o'}[sortField == 'creationBy.name']"></i> 创建者
+                </a>
+            </li>
+            <li ng-click="changeSort('updateDate')">
+                <a tabindex="-1" href="">
+                    <i class="fa"
+                       ng-class="{true:'fa-dot-circle-o',false:'fa-circle-o'}[sortField == 'updateDate']"></i> 时间
+                </a>
+            </li>
+        </ul>
+    </li>
+    <li role="separator" class="divider"></li>
+    <li ng-click="reload()">
+        <a tabindex="-1" href="">
+            刷新
+        </a>
+    </li>
+</ul>
+
+<ul id="permissionContextMenu" class="dropdown-menu" role="menu">
+    <li ng-repeat="permission in permissions" ng-click="updatePermission(permission,$event)">
+        <a tabindex="-1" href="">
+            {{permission.name}}
+        </a>
+    </li>
+</ul>

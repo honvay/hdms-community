@@ -1,0 +1,34 @@
+<div class="m-c">
+	<div class="modal-header">
+		<h4 class="modal-title">设置权限</h4>
+	</div>
+	<div class="modal-body wrapper-lg">
+		<div class="row">
+			<div class="col-sm-12">
+				<form name="permissionSetForm" class="form-horizontal form-validation">
+					<div class="form-group">
+						<label class="col-sm-3 control-label">选择权限：</label>
+						<div class="col-sm-9 ">
+								<select class="form-control wrapper-xs" ng-model="permission">
+									<option value="" >所有权限</option>
+									<option ng-repeat="permission in permissions" value="{{permission.id}}" ng-selected="permission.id == permission">{{permission.name}}</option>
+								</select>
+						</div>
+						<div class="col-sm-12">
+							<div class="alert alert-info m-b-none m-t-sm">
+								该文件夹所有成员可见，如果没有设置权限则全员可见
+							</div>
+						</div>
+					</div>
+				</form>
+			</div>
+		</div>
+	</div>
+	<div class="modal-footer" style="text-align: right;">
+		<button type="button" class="btn btn-primary" ng-click="ok()" style="margin-left: 5px;" ng-disabled="!permissionSetForm.$dirty || saving">
+			<span ng-show="!saving">提交</span>
+			<span ng-show="saving">正在提交</span>
+		</button>
+		<button type="button" class="btn btn-default" ng-click="close()">取消</button>
+	</div>
+</div>

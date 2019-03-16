@@ -1,0 +1,131 @@
+<div class="app-ctrl" style="padding-top:76px;overflow: hidden" ng-show="!error">
+	<div class="b-b app-title-fixed padder">
+		<div class="row wrapper-md bg-light">
+			<div class="col-sm-9 col-xs-9 padder-sm" >
+          		<span class="m-n directory-header h3">
+          			<i class="fa fa-user"></i>
+          			个人设置
+          		</span>
+			</div>
+			<div class="col-sm-3 col-xs-3" style="text-align: right;">
+				<button class="btn btn-primary"
+					ng-disabled="userSettingForm.$invalid || !userSettingForm.$dirty"
+					ng-click="save()">保存</button>
+			</div>
+	</div>
+	</div>
+	<div class="bg-light wrapper-md lter app-inner">
+	<form name="userSettingForm" class="form-horizontal form-property form-validation" method="get">
+		<div class="panel panel-default">
+		<div class="panel-heading font-bold">个人信息</div>
+		<div class="panel-body">
+				<div class="form-group m-b-sm">
+					<label class="col-sm-5 control-label ">用户名</label>
+					<div class="col-sm-7 control-label">
+						{{user.username}}
+					</div>
+				</div>
+				<div class="line line-dashed b-b line-lg "></div>
+				<div class="form-group m-b-sm">
+					<label class="col-sm-5 control-label ">邮箱</label>
+					<div class="col-sm-7 ">
+						<input type="email" name="name" ng-model='user.email' required="required" class="form-control  w-md" >
+					</div>
+				</div>
+				<div class="line line-dashed b-b line-lg "></div>
+				<div class="form-group">
+					<label class="col-sm-5 control-label">姓名</label>
+					<div class="col-sm-7">
+						<input type="text" name="name" ng-model='user.name' required="required" class="form-control  w-md" >
+					</div>
+				</div>
+				<div class="line line-dashed b-b line-lg "></div>
+				<div class="form-group">
+					<label class="col-sm-5 control-label">头像</label>
+					<input id="avatarInput" type="file" class="hidden" onchange="angular.element(this).scope().upload()"> 
+					<div class="col-sm-7 m-b-sm">
+						<div>
+							<img ng-src='{{user.avatar | resource}}' class="rounded w-xs m-b-sm avatar-img" />
+						</div>
+						<button class="btn btn-default" ng-click="selectAvatar()" ng-disabled="uploading">
+							<span ng-show="uploading">正在上传</span>
+							<span ng-show="!uploading">选择头像</span>
+						</button>
+						推荐尺寸240*240，大小不超过2MB
+						<div class="alert alert-danger m-t-sm m-b-none w-md" ng-show="result.success === false"  role="alert">{{result.message}}</div>
+					</div>
+				</div>
+				<div class="line line-dashed b-b line-lg "></div>
+				<div class="form-group m-b-sm">
+					<label class="col-sm-5 control-label ">部门</label>
+					<div class="col-sm-7 control-label">
+						{{user.department.name}}
+					</div>
+				</div>
+				<div class="line line-dashed b-b line-lg "></div>
+				<div class="form-group">
+					<label class="col-sm-5 control-label">个人空间</label>
+					<div class="col-sm-7 control-label">
+						<div class="m-b-xs">总共：{{space.quota | formatSize}}，已用：{{space.used | formatSize}}</div>
+						 <progressbar value="space.quatoPrecent" type="white" class="progress-xs m-b-none dker w-md"></progressbar>
+					</div>
+				</div>
+		</div>
+	</div>
+	<div class="panel panel-default">
+		<div class="panel-heading font-bold">偏好设置</div>
+		<div class="panel-body">
+				<div class="form-group m-b-sm">
+					<label class="col-sm-5 control-label ">文件显示模式</label>
+					<div class="col-sm-7">
+						<label class="checkbox-inline i-checks"> 
+							<input type="radio" name="mode" value="list" ng-checked="user.mode == 'list'" ng-model="user.mode"><i></i>
+							列表模式
+						</label> 
+						<label class="checkbox-inline i-checks"> 
+							<input type="radio" name="mode" value="block" ng-checked="user.mode == 'block'" ng-model="user.mode"><i></i> 
+							图标模式
+						</label>
+					</div>
+				</div>
+				<div class="line line-dashed b-b line-lg "></div>
+				<div class="form-group m-b-sm">
+					<label class="col-sm-5 control-label ">排序字段</label>
+					<div class="col-sm-7">
+						<label class="checkbox-inline i-checks"> 
+							<input type="radio" name="sortField" value="name" ng-checked="user.sortField == 'name'" ng-model="user.sortField"><i></i>
+							名称
+						</label> 
+						<label class="checkbox-inline i-checks"> 
+							<input type="radio" name="sortField" value="size" ng-checked="user.sortField == 'size'" ng-model="user.sortField"><i></i> 
+							大小
+						</label>
+						<label class="checkbox-inline i-checks"> 
+							<input type="radio" name="sortField" value="updateDate" ng-checked="user.sortField == 'updateDate'" ng-model="user.sortField"><i></i> 
+							时间
+						</label>
+						<label class="checkbox-inline i-checks"> 
+							<input type="radio" name="sortField" value="creationBy.name" ng-checked="user.sortField == 'creationBy.name'" ng-model="user.sortField"><i></i> 
+							创建者
+						</label>
+					</div>
+				</div>
+				<div class="line line-dashed b-b line-lg "></div>
+				<div class="form-group m-b-sm">
+					<label class="col-sm-5 control-label ">排序模式</label>
+					<div class="col-sm-7">
+						<label class="checkbox-inline i-checks"> 
+							<input type="radio" name="sortDesc" value="false" ng-checked="user.sortDesc !== true" ng-model="user.sortDesc"><i></i>
+							升序
+						</label> 
+						<label class="checkbox-inline i-checks"> 
+							<input type="radio" name="sortDesc" value="true" ng-checked="user.sortDesc === true" ng-model="user.sortDesc"><i></i> 
+							降序
+						</label>
+					</div>
+				</div>
+		</div>
+	</div>
+	</form>
+</div>
+</div>

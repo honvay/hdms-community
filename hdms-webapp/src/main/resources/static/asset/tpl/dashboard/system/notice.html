@@ -1,0 +1,56 @@
+<div ng-controller="NoticeCtrl"  class="app-ctrl">
+<div class="bg-light lter b-b wrapper-md app-title-fixed">
+<div class="row">
+        <div class="col-sm-6 col-xs-6">
+          <h1 class="m-n font-thin h3" style="line-height: 34px;">系统通知</h1>
+        </div>
+        <div class="col-sm-6 col-xs-6 text-right" >
+          <button class="btn btn-primary" ng-disabled="settingForm.$invalid || !settingForm.$dirty" ng-click="save()">保存</button>
+          <button class="btn btn-default" ng-disabled="!settingForm.$dirty" ng-click="reset()">重置</button>
+        </div>
+      </div>
+</div>
+<div class="wrapper-md">
+	<div class="panel panel-default">
+		<div class="panel-heading font-bold">配置</div>
+		<div class="panel-body">
+			<form name="settingForm" class="form-horizontal form-property" method="get">
+				<div class="form-group">
+					<label class="col-sm-3 control-label">是否显示通知</label>
+					<div class="col-sm-9">
+						<label class="i-switch m-t-xs m-r bg-primary">
+			              <input type="checkbox" ng-checked="appSetting.enable" ng-model="notice.enable">
+			              <i></i>
+			            </label>
+					</div>
+				</div>
+				<div class="line line-dashed b-b line-lg pull-in"></div>
+				<div class="form-group">
+					<label class="col-sm-3 control-label">显示时间</label>
+					<div class="col-sm-9">
+						 <input type="text" name="start" class="form-control input-sm w-sm inline"  ng-click="startOpended = true" date-format="YYYY-MM-DD" ng-model="notice.startDate" datepicker-popup="yyyy-MM-dd" is-open="startOpended" 
+					       datepicker-options="{formatYear: 'yyyy',class:'datepicker',showWeeks:false}"  close-text="关闭" current-text="今天" clear-text="清除" />
+					     - 
+					    <input type="text" name="end" class="form-control input-sm w-sm inline" date-format="YYYY-MM-DD" ng-click="endOpened = true" ng-model="notice.endDate" datepicker-popup="yyyy-MM-dd" is-open="endOpened" 
+					       datepicker-options="{formatYear: 'yyyy',class:'datepicker',showWeeks:false}" close-text="关闭" current-text="今天" clear-text="清除" />
+						<span class="help-block m-b-none">设置通知显示的时间段</span>
+					</div>
+				</div>
+				<div class="line line-dashed b-b line-lg pull-in"></div>
+				<div class="form-group">
+					<label class="col-sm-3 control-label m-b-sm">标题</label>
+					<div class="col-sm-9">
+						<input type="text" name="noticeTitle" ng-model='notice.title' class="form-control">
+					</div>
+				</div>
+				<div class="line line-dashed b-b line-lg pull-in"></div>
+				<div class="form-group">
+					<label class="col-sm-3 control-label">内容</label>
+					<div class="col-sm-9">
+						<textarea class="form-control" name="setting.noticeContent" ng-model='notice.content' rows="10"></textarea>
+					</div>
+				</div>
+			</form>
+		</div>
+	</div>
+</div>

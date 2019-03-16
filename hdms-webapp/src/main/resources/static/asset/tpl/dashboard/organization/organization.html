@@ -1,0 +1,144 @@
+<div class="w-full h-full" ng-controller="OrganizationCtrl">
+<div class="app-ctrl" style="padding-top: 67px">
+      <div class="bg-light lter b-b wrapper-md app-title-fixed">
+        <div class="row">
+	        <div class="col-sm-12 col-xs-12">
+	          <h1 class="m-n font-thin h3">组织架构管理</h1>
+	        </div>
+	      </div>
+      </div>
+      <div class="app-inner pos-rlt">
+			  <div class="bg-light lter b-r pos-abt w-md h-full">
+			      <hc-tree tree-control="tree" 
+						   load-asyn="true" 
+						   on-option-click="onTreeOptionClick(node,event)"
+						   on-init="onTreeInit()"
+						   open-folder-icon="fa fa-users"
+						   folder-icon="fa fa-users"
+						   leaf-icon="fa fa-users"
+						   show-option-icon = "true"
+						   on-selection-change="onSelectionChange(selection);" 
+						   load-url="/department/list">
+					</hc-tree>
+			  </div>
+	            <div class="h-full bg-light lter" ng-controller="UserCtrl" style="padding-left: 240px;">
+	            	<div class="row wrapper-sm b-b m-l-non m-r-none">
+	            		<div class="col-sm-4">
+	            			<h1 class="m-n font-thin h4 inline" style="padding:7px 10px;">
+	            			<i class="fa fa-users"></i> {{current.name}}
+	            			</h1>
+	            			<span class="text-sm" style="color:#aaa" ng-show="users.length > 0">( {{users.length}}人 )</span>
+	            		</div>
+	            		<div class="col-sm-8" style="text-align: right;">
+							<button class="btn btn-primary" ng-disabled="!current" ng-click="addUser()">新增用户</button>
+							<button class="btn btn-primary" ng-disabled="!selected" ng-click="editUser()" ng-disabled="selected.executing">编辑用户</button>
+							<div class="btn-group" dropdown is-open="status.isopen">
+					            <button type="button" class="btn btn-default" dropdown-toggle ng-disabled="!selected || selected.executing">
+					             	 更多&nbsp;<span class="caret"></span>
+					            </button>
+					            <ul class="dropdown-menu" role="menu" style="left:inherit;right:0px;">
+					              <li><a href ng-click="reset($event)">重置密码</a></li>
+					              <li><a href ng-click="transfer()">文档移交</a></li>
+					              <li><a href ng-click="setQuota($event)">调整配额</a></li>
+					              <li><a href ng-click="transferAdmin()" ng-show="selected.role != 'SYS_ADMIN'">移交管理员权限</a></li>
+					            </ul>
+					          </div>
+							<div class="btn-group" dropdown is-open="isImportOpen">
+                                <button class="btn btn-default">导入</button>
+								<button type="button" class="btn btn-default dropdown-toggle" dropdown-toggle>
+									<span class="caret"></span>
+								</button>
+								<ul class="dropdown-menu dropdown-menu-right" role="menu">
+									<li>
+										<a >
+											下载导入模板
+										</a>
+									</li>
+								</ul>
+							</div>
+
+						</div>
+	            	</div>
+	            	<div class="table-responsive " ng-show="!status.loading && users.length > 0">
+						<table class="table table-hover  b-b b-light ">
+							<thead>
+								<tr>
+									<th ng-click="title='username';desc=!desc" width="30%">
+										用户名
+									 	<i ng-show="title == 'username'" ng-class="{'fa-caret-up' : desc,'fa-caret-down':!desc}" class="fa"> </i>
+									</th>
+									<th ng-click="title='name';desc=!desc" width="20%">姓名
+										<i ng-show="title == 'name'" ng-class="{'fa-caret-up' : desc,'fa-caret-down':!desc}" class="fa"> </i>
+									</th>
+									<th ng-click="title='email';desc=!desc" width="30%">
+										邮箱
+										<i ng-show="title == 'email'" ng-class="{'fa-caret-up' : desc,'fa-caret-down':!desc}" class="fa"> </i>
+									</th>
+									<th ng-click="title='status';desc=!desc" width="10%">
+										状态
+										<i ng-show="title == 'status'" ng-class="{'fa-caret-up' : desc,'fa-caret-down':!desc}" class="fa"> </i>
+									</th>
+									<th width="10%">操作</th>
+								</tr>
+							</thead>
+							<tbody>
+								<tr>
+									<th>
+										<input type="text" class="input-sm form-control" placeholder="" ng-model="condition.username">
+									</th>
+									<th>
+										<input type="text" class="input-sm  form-control" placeholder="" ng-model="condition.name">
+									</th>
+									<th >
+										<input type="text" class="input-sm  form-control" placeholder="" ng-model="condition.email">
+									</th>
+									<th>
+										<select  class="input-sm form-control" ng-model="condition.status">
+											<option></option>
+											<option value="1">正常</option>
+											<option value="2">锁定</option>
+                                            <option value="3">失效</option>
+                                        </select>
+									</th>
+									<th></th>
+								</tr>
+								<tr ng-class="{'user-selected':user.selected}" ng-click="select(user);" 
+									ng-repeat="user in users | filter:{username:condition.username,name:condition.name,email:condition.email,status:condition.status} | orderBy: title : desc" 
+									valign="middle"
+									style="line-height: 24px;">
+									<td >
+										<img ng-src="{{user.avatar | resource}}" class="img-circle m-r-xs" style="height:24px;" alt="...">
+										<span class="m-r-xs">{{user.username}}</span>
+										<span ng-if="user.role == 'ROLE_SYS_ADMIN'" class="label label-sm label-minor">管理员</span>
+										<span ng-if="user.role == 'ROLE_DOC_ADMIN'" class="label label-sm label-minor">文档管理员</span>
+									</td>
+									<td >{{user.name}}</td>
+									<td >{{user.email}}</td>
+									<td >{{user.status | translate:'hr.user.status'}}</td>
+									<td>
+										<i class="fa fa-ban hover text-md m-r-xs" ng-show="user.status == 1"  ng-click="disable(user,$event);" tooltip="禁用"></i>
+										<i class="fa fa-check-circle-o hover text-md m-r-xs" ng-show="user.status == 3" ng-click="enable(user,$event);" tooltip="启用"></i>
+										<i class="fa fa-lock hover text-md m-r-xs" ng-show="user.status == 1" ng-click="lock(user,$event);" tooltip="锁定"></i>
+										<i class="fa fa-unlock hover text-md m-r-xs" ng-show="user.status == 2" ng-click="unlock(user,$event);" tooltip="解锁"></i>
+									</td>
+								</tr>
+							</tbody>
+						</table>
+					</div>
+					<div class="wrapper-xl text-center" ng-show="status.loading" >
+						<img ng-src="{{'asset/img/loading.gif'  | resource}}" />
+						<p class="m-t-sm">正在加载</p>
+					</div>
+					<div class="wrapper-xl text-center" ng-show="(users.length == 0 || !users) && !status.loading">
+						<i class="iconfont icon-empty"></i>
+						<p class="m-t-md">该部门中没有员工</p>
+					</div>
+	            </div>
+	          </div>
+        </div>
+        <ul id="departmentMenu" class="dropdown-menu" role="menu">
+           <li><a tabindex="-1" href="" ng-click="addDepartment()">添加子部门</a></li>
+           <li><a tabindex="-1" href="" ng-click="editDepartment()">编辑部门</a></li>
+           <li><a tabindex="-1" ng-show="selected.$parent.$root !== true" ng-click="deleteDepartment()">删除部门</a></li>
+         </ul>
+</div>

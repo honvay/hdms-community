@@ -1,0 +1,114 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper namespace="com.honvay.hdms.dms.authorize.mapper.AuthorizeMapper">
+
+    <resultMap id="documentPermission" type="com.honvay.hdms.dms.model.dto.OwnerPermissionDto">
+        <id property="id" jdbcType="INTEGER" column="id"/>
+        <result column="document_id" jdbcType="INTEGER" property="documentId"/>
+        <result column="owner" jdbcType="INTEGER" property="owner"/>
+        <result column="owner_type" jdbcType="INTEGER" property="ownerType"/>
+        <result column="permissions" jdbcType="VARCHAR" property="permissions"/>
+        <result column="path" jdbcType="VARCHAR" property="path"/>
+    </resultMap>
+
+    <resultMap id="authorizeVo" type="com.honvay.hdms.dms.authorize.model.AuthorizeVo">
+        <id property="id" jdbcType="INTEGER" column="id"/>
+        <result column="permissionId" jdbcType="INTEGER" property="permissionId"/>
+        <result column="permissionName" jdbcType="VARCHAR" property="permissionName"/>
+        <result column="owner" jdbcType="INTEGER" property="owner"/>
+        <result column="ownerType" jdbcType="INTEGER" property="ownerType"/>
+        <result column="name" jdbcType="VARCHAR" property="name"/>
+        <result column="avatar" jdbcType="VARCHAR" property="avatar"/>
+        <result column="path" jdbcType="VARCHAR" property="path"/>
+        <result column="documentId" jdbcType="INTEGER" property="documentId"/>
+    </resultMap>
+
+    <select id="findByOwner" resultMap="documentPermission">
+        select t.id,t.document_id, p.permissions,d.path,t.owner,t.owner_type
+        from hdms_authorize t
+        left join hdms_permission p on p.id = t.permission_id
+        left join hdms_document d on d.id = t.document_id
+        where t.owner = #{userId}
+        and t.owner_type = 1
+        union all
+        select t.id,t.document_id, p.permissions,d.path,t.owner,t.owner_type
+        from hdms_authorize t
+        left join hdms_permission p on p.id = t.permission_id
+        left join hdms_document d on d.id = t.document_id
+        where t.owner_type = 2
+        and t.owner in
+        <foreach collection="departmentIds" item="departmentId" index="index" open="(" separator="," close=")">
+            #{departmentId}
+        </foreach>
+    </select>
+
+    <select id="findByDocumentId" resultMap="authorizeVo">
+        select t.id as id,
+        t.permission_id as permissionId,
+        t.owner as owner,
+        t.owner_type as ownerType,
+        t.document_id as documentId,
+        u.name as name,
+        u.avatar as avatar,
+        p.name as permissionName,
+        d.path as path
+        from hdms_authorize t
+        left join hdms_user u on t.owner = u.id
+        left join hdms_permission p on p.id = t.permission_id
+        left join hdms_document d on d.id = t.document_id
+        where t.document_id in
+        <foreach collection="documentIds" item="documentId" index="index" open="(" separator="," close=")">
+            #{documentId}
+        </foreach>
+        and t.owner_type = 1
+        union all
+        select t.id as id,
+        t.permission_id as permissionId,
+        t.owner as owner,
+        t.owner_type as ownerType,
+        t.document_id as documentId,
+        u.name as name,
+        null as avatar,
+        p.name as permissionName,
+        d.path as path
+        from hdms_authorize t
+        left join hdms_department u on t.owner = u.id
+        left join hdms_permission p on p.id = t.permission_id
+        left join hdms_document d on d.id = t.document_id
+        where t.document_id in
+        <foreach collection="documentIds" item="documentId" index="index" open="(" separator="," close=")">
+            #{documentId}
+        </foreach>
+        and t.owner_type = 2
+    </select>
+
+    <select id="findByDocumentIdAndOwner" resultMap="documentPermission">
+        select t.id,t.document_id, p.permissions,t.owner,t.owner_type,d.path
+        from hdms_authorize t
+        left join hdms_permission p on p.id = t.permission_id
+        left join hdms_document d on d.id = t.document_id
+        where t.owner = #{userId}
+        and t.owner_type = 1
+        and t.document_id in
+        <foreach collection="documentIds" item="documentId" index="index" open="(" separator="," close=")">
+            #{documentId}
+        </foreach>
+        union all
+        select t.id,t.document_id, p.permissions,t.owner,t.owner_type,d.path
+        from hdms_authorize t
+        left join hdms_department u on t.owner = u.id
+        left join hdms_permission p on p.id = t.permission_id
+        left join hdms_document d on d.id = t.document_id
+        where
+        t.owner in
+        <foreach collection="departmentIds" item="departmentId" index="index" open="(" separator="," close=")">
+            #{departmentId}
+        </foreach>
+        and t.owner_type = 2
+        and t.document_id in
+        <foreach collection="documentIds" item="documentId" index="index" open="(" separator="," close=")">
+            #{documentId}
+        </foreach>
+    </select>
+
+</mapper>

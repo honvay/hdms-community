@@ -1,0 +1,247 @@
+<!DOCTYPE html>
+<html lang="zh_CN">
+<head>
+    <base href="/">
+    <meta charset="utf-8"/>
+    <title>瀚为云文档协作平台</title>
+    <meta name="viewport" content="width=device-width, initial-scale=1, maximum-scale=1"/>
+    <link rel="stylesheet" href="/asset/dist/css/basic.min.css" type="text/css"/>
+    <link rel="stylesheet" href="/asset/dist/css/control.min.css" type="text/css"/>
+    <link rel="stylesheet" href="/asset/dist/css/app.min.css" type="text/css"/>
+    <link rel="shortcut icon" href="/asset/img/logo_60_blue.png" media="screen"/>
+</head>
+<body ng-controller="AppCtrl">
+<div class="bg-primary preload text-white text-center" ng-hide="started">
+    <img src="/asset/img/logo_100.png"/>
+    <h2 class="inline">瀚为云文档协作平台</h2>
+    <div class="progress-xs m-t-sm dker progress w">
+        <div id="progress" class="progress-bar progress-bar-white" style="width: 0%;"></div>
+    </div>
+</div>
+<script>
+    var precent = 0;
+
+    function progress() {
+        precent = precent >= 90 ? 0 : precent + 10;
+        document.getElementById("progress").style.width = precent + "%";
+    }
+
+    var preloadInterval = window.setInterval(progress, 500);
+</script>
+<toaster-container toaster-options="{'position-class': 'toast-top-right', 'close-button':true}"></toaster-container>
+<input id="uploadFile" type="file" multiple="multiple" class="hidden"
+       onchange="angular.element(this).scope().onUploadFileChange()"/>
+<div class="app app-client" id="app">
+    <div class="app-header box-shadow pos-rlt bg-primary w-full">
+        <div class="collapse pos-rlt navbar-collapse">
+            <div class="wrapper-sm inline">
+                <a href="#" class="text-lt">
+		          <span class="m-r-xs">
+		          <img src="/asset/img/logo_100.png"></span>
+                    <span class="app-name">瀚为云文档协作平台</span>
+                </a>
+            </div>
+            <div class="navbar-right wrapper-sm">
+                <form class="navbar-form navbar-form-sm no-padder" style="margin: 0px;">
+                    <div class="form-group">
+                        <div class="input-group">
+                            <input type="text" ng-model="keyword"
+                                   class="form-control input-sm bg-light no-border rounded padder"
+                                   ng-keydown="onSearchKeyDown($event);" placeholder="搜索文件">
+                            <span class="input-group-btn">
+		                <button type="submit" class="btn btn-sm bg-light rounded" ng-click="search();"><i
+                                class="fa fa-search"></i></button>
+		              </span>
+                        </div>
+                    </div>
+                </form>
+            </div>
+            <ul class="nav navbar-nav navbar-right ">
+                <li ng-click="showQueue = !showQueue">
+                    <a href class="" tooltip="上传队列" tooltip-placement="bottom">
+                        <i class="glyphicon glyphicon-cloud-upload"></i>
+                        <span class="badge badge-sm up bg-danger pull-right-xs" ng-show="uploadStats.progressNum"
+                              ng-bind="uploadStats.progressNum"></span>
+                    </a>
+                </li>
+                <li ui-sref-active="active">
+                    <a ui-sref='messages' class="auto" tooltip="消息提醒" tooltip-placement="bottom">
+                        <i class="glyphicon glyphicon-comment "></i>
+                    </a>
+                </li>
+            </ul>
+        </div>
+    </div>
+    <div class="app-aside bg-primay-light lter b-r h-full">
+        <!-- user -->
+        <div class="clearfix text-center " id="aside-user">
+            <div class="dropdown wrapper" dropdown>
+                <a>
+				          <span class="thumb-lg w-auto-folded avatar m-t-sm">
+				            <img ng-src='{{user.avatar | resource}}' class="img-full avatar-img" alt="...">
+				          </span>
+                </a>
+                <a href class="dropdown-toggle hidden-folded" dropdown-toggle>
+				          <span class="clear">
+				            <span class="block m-t-sm">
+				              <strong class="font-bold" ng-bind="user.name"></strong> 
+				              <b class="caret"></b> 
+				            </span>
+				            <span class="text-xs block" ng-bind="user.department.name"></span>
+				          </span>
+                </a>
+                <!-- dropdown -->
+                <ul class="dropdown-menu animated fadeInRight w hidden-folded">
+                    <li class="wrapper b-b m-b-sm bg-primary m-t-n-xs">
+                        <span class="arrow top hidden-folded arrow-primary"></span>
+                        <div>
+                            <p style="font-size:12px;">共{{space.quota | formatSize }}，已使用{{space.used | formatSize
+                                }}</p>
+                        </div>
+                        <progressbar value="space.quatoPrecent" type="white"
+                                     class="progress-xs m-b-none dker"></progressbar>
+                    </li>
+                    <li>
+                        <a ui-sref="profile">个人设置</a>
+                    </li>
+                    <li>
+                        <a ui-sref="changePassword">修改密码</a>
+                    </li>
+                    <li ng-show="user.role == 'ROLE_SYS_ADMIN'">
+                        <a href="/dashboard" target="_self">进入控制台</a>
+                    </li>
+                    <li class="divider"></li>
+                    <li>
+                        <a href="/logout" target="_self">退出登录</a>
+                    </li>
+                </ul>
+                <!-- / dropdown -->
+            </div>
+            <div class="line dk hidden-folded"></div>
+        </div>
+        <!-- / user -->
+
+        <!-- nav -->
+        <nav ui-nav class="navi">
+            <ul class="nav">
+                <!--  <li class="hidden-folded padder m-t m-b-sm text-muted text-xs">
+                   <span>网盘</span>
+                 </li> -->
+                <li ui-sref-active="active" ng-class="{'active':mountAlias == 'enterprise'}">
+                    <a ui-sref='directory({directory:"enterprise"})'>
+                        <i class="fa fa-users  "></i>
+                        <span>企业文档</span>
+                    </a>
+                </li>
+                <li ui-sref-active="active" ng-class="{'active':mountAlias == 'my'}">
+                    <a ui-sref='directory({directory:"my"})'>
+                        <i class="fa fa-user "></i>
+                        <span>我的文档</span>
+                    </a>
+                </li>
+                <!-- <li>
+                  <a href class="auto">
+                    <i class="glyphicon glyphicon-search"></i>
+                    <span>全文检索</span>
+                  </a>
+                </li>  -->
+                <li class="line dk"></li>
+                <li ui-sref-active="active">
+                    <a ui-sref='share' class="auto">
+                        <i class="fa fa-share-alt "></i>
+                        <span>我的分享</span>
+                    </a>
+                </li>
+                <li ui-sref-active="active">
+                    <a ui-sref='recent' class="auto">
+                        <i class="fa fa-clock-o"></i>
+                        <span>最近打开</span>
+                    </a>
+                </li>
+                <li ui-sref-active="active">
+                    <a ui-sref='favorites'>
+                        <i class="fa fa-star"></i>
+                        <span>收藏夹</span>
+                    </a>
+                </li>
+                <li ui-sref-active="active">
+                    <a ui-sref='recycle' class="auto">
+                        <i class="glyphicon glyphicon-trash"></i>
+                        <span>回收站</span>
+                    </a>
+                </li>
+            </ul>
+        </nav>
+        <!-- nav -->
+    </div>
+    <!-- / menu -->
+    <!-- content fade-in-left -->
+    <div class="app-content" style="overflow: hidden">
+        <div ui-butterbar></div>
+        <div class="app-content-body " ui-view></div>
+    </div>
+    <!-- /content -->
+</div>
+
+<div id="dropbox" class="dropbox text-center h2">文件拖放到此处上传</div>
+<div class="queue panel panel-default" ng-class="{active:showQueue}">
+    <div class="panel-heading">
+        <i class="glyphicon glyphicon-cloud-upload"></i> 上传队列
+        <!-- <a class="pull-right text-muted text-lg" ui-toggle-class="active" owner=".queue">×</a> -->
+        <button type="button" class="close" ng-click="showQueue = false">
+            <span aria-hidden="true">×</span>
+        </button>
+    </div>
+    <div class="panel-body">
+        <div class="queue-item b-b" ng-repeat="file in files">
+            <div class="queue-progress" ng-show="file.status != 'success'"
+                 ng-style="{width: file.uploadPercentage * 100 + '%'}"></div>
+            <div class="queue-item-content wrapper-xs">
+                <div class="file-name">
+                    <img class="file-icon" ng-src="{{getIcon(file)}}"/>
+                    {{file.name}}
+                </div>
+                <div class="file-size">
+                    {{file.size | formatSize}}
+                </div>
+                <div class="file-path">
+                    <a href="index/directory/{{file.parent != -1 ? file.parent : getMounntAlias(file.mount)}}">{{file.path}}</a>
+                </div>
+                <div class="file-status text-center" tooltip="{{file.statusText}}"
+                     ng-class="{'text-success':file.status == 'success','text-dander':file.status == 'error'}">
+                    {{file.statusText}}
+                </div>
+                <div class="file-operation text-center">
+                    <i class="fa fa-play hover m-r-xs" ng-show="file.status == 'interrupt'"
+                       ng-click="webUploader.upload(file)"></i>
+                    <i class="fa fa-pause hover m-r-xs" ng-show="file.status == 'progress'"
+                       ng-click="webUploader.stop(file)"></i>
+                    <i class="fa fa-remove hover m-r-xs" ng-show="file.status != 'success'"
+                       ng-click="webUploader.removeFile(file,true)"></i>
+                </div>
+                <div class="clearfix"></div>
+            </div>
+        </div>
+        <div class="wrapper-xl text-center" ng-show="files.length == 0 || !files">
+            <i class="iconfont icon-empty"></i>
+            <p class="m-t-md">队列中没有文件</p>
+        </div>
+    </div>
+</div>
+<script th:inline="javascript">
+    /*<![CDATA[*/
+
+    var crsf = {
+        parameterName: [[${_csrf.parameterName}]],
+        headerName: [[${_csrf.headerName}]],
+        token: [[${_csrf.token}]]
+    };
+    /*]]>*/
+</script>
+<!-- jQuery -->
+<script src="/asset/dist/js/basic.min.js"></script>
+<script src="/asset/dist/js/module.min.js"></script>
+<script src="/asset/src/require.js" data-main="asset/src/app/app.main.js"></script>
+<iframe class="hidden" ng-src="{{downloadURL}}"></iframe>
+</body>
+</html>
