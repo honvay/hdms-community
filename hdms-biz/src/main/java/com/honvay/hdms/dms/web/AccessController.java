@@ -16,6 +16,7 @@ import com.honvay.hdms.framework.utils.ServletUtils;
 import org.apache.tomcat.util.http.fileupload.IOUtils;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.context.ApplicationEventPublisher;
+import org.springframework.http.MediaType;
 import org.springframework.stereotype.Controller;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RequestParam;
@@ -50,6 +51,7 @@ public class AccessController {
 	public void stream(String token, HttpServletResponse response) throws IOException {
 		String code = accessTokenStore.get(token);
 		if (code != null) {
+			response.setContentType(MediaType.APPLICATION_OCTET_STREAM_VALUE);
 			IOUtils.copy(storage.getInputStream(StorageDirectory.FILE, code), response.getOutputStream());
 		}
 	}
