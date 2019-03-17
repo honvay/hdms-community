@@ -59,19 +59,9 @@ app.controller('AuthorizeCtrl', [
     function ($rootScope, $scope, $http, Messager, $modal, $modalInstance, id) {
 
         $scope.permissionMap = {};
-        $http.get("/conf/permission").success(function (result) {
-            if (result.success) {
-                $scope.permissions = result.data;
-                for (var i = 0; i < $scope.permissions.length; i++) {
-                    $scope.permissionMap[$scope.permissions[i].id] = $scope.permissions[i].name;
-                }
-            } else {
-                $scope.toaster.error("加载权限配置失败：" + result.message);
-            }
-        }).error(function (result, status) {
-            $scope.toaster.error("加载权限配置失败：" + (result.message || status));
-        });
-
+        for (var i = 0; i < $scope.permissions.length; i++) {
+            $scope.permissionMap[$scope.permissions[i].id] = $scope.permissions[i].name;
+        }
         $scope.select = function (authorize, event) {
             event.stopPropagation();
             if ($scope.current === authorize) {
@@ -99,9 +89,11 @@ app.controller('AuthorizeCtrl', [
                     $scope.authorizes = result.data;
                 } else {
                     $scope.toaster.pop('error', result.message);
+                    $scope.error = result.message;
                 }
-            }).error(function (data, status) {
+            }).error(function (result, status) {
                 $scope.loading = false;
+                $scope.error = result.message;
                 $scope.toaster.pop('error', '加载失败：' + status);
             });
         }

@@ -66,6 +66,12 @@
 					<p class="m-t-sm">没有配置权限</p>
 				</div>
 			</div>
+			<div class="col-sm-12" ng-show="error">
+				<div class="wrapper-xs text-center" >
+					<i class="iconfont icon-error" style="font-size: 150pt"></i>
+					<p class="m-t-sm">加载失败:{{error}}</p>
+				</div>
+			</div>
            </div>
            <div class="modal-footer text-left">
            <div class="col-sm-4 no-padder">
