@@ -11,9 +11,6 @@ app.config(['$translateProvider', function ($translateProvider) {
                 case 401:
                     $window.location.href = '/login';
                     break;
-                case 403:
-                    $window.location.href = '/login';
-                    break;
             }
             return $q.reject(errorResponse);
         }
