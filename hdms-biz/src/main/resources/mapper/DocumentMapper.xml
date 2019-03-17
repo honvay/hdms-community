@@ -161,7 +161,6 @@
                 select id from hdms_document a
                 where a.mount = #{organizationMount}
                 and a.deleted = true
-                and
                 <foreach collection="paths" item="path" open="(" close=")" separator="or">
                     a.path like #{path}
                 </foreach>
