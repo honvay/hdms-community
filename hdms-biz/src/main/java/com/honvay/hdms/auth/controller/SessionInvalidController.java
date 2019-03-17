@@ -30,7 +30,7 @@ public class SessionInvalidController {
 
 	@ResponseBody
 	@RequestMapping
-	@ResponseStatus(HttpStatus.FORBIDDEN)
+	@ResponseStatus(HttpStatus.UNAUTHORIZED)
 	public Result<String> sessionInvalid() {
 		return Result.success("会话已失效");
 	}
