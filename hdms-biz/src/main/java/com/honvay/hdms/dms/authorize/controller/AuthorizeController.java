@@ -27,7 +27,6 @@ import javax.validation.Valid;
  */
 @RestController
 @RequestMapping("/fs/authorize")
-@PreAuthorize("hasAnyRole('" + User.ROLE_SYS_ADMIN + "','" + User.ROLE_DOC_ADMIN + "')")
 public class AuthorizeController extends BaseController {
 
 	@Autowired
