@@ -184,11 +184,7 @@ app.controller('RecycleCtrl',
                 }
             }
 
-            $(document).unbind("keydown", handleF5);
-            $(document).keydown(function (event) {
-                handleF5(event);
-            });
-
+            $(document).keydown(handleF5);
             $scope.$on("$destroy", function () {
                 $(document).unbind("keydown", handleF5);
             });

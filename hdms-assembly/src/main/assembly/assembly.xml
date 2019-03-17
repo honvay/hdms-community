@@ -1,7 +1,7 @@
 <assembly>
     <id>1.0</id>
     <formats>
-        <format>dir</format>
+        <format>tar.gz</format>
     </formats>
     <includeBaseDirectory>false</includeBaseDirectory>
 

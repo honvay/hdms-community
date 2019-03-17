@@ -592,18 +592,11 @@ app.controller('DirectoryCtrl',
                 }
             }
 
-            $(document).on("keydown", function (event) {
-                handleF5(event);
-            });
-
-            $(window).on("click", function (event) {
-                hideMenu(event);
-            });
-
+            $(document).on("keydown", handleF5);
+            $(window).on("click", hideMenu);
             $scope.$on("$destroy", function () {
                 $(window).unbind("click", hideMenu);
                 $(document).unbind("keydown", handleF5);
-
                 $rootScope.setCurrent(null);
             });
         }]);

@@ -147,9 +147,7 @@ app.controller( 'SearchCtrl',
 		    	$scope.load();
 		    }  
 		}
-		$(document).bind("keydown.hc",function(event) {
-			handleF5(event);
-		});
+		$(document).bind("keydown.hc",handleF5);
 	
 		$scope.$on("$destroy", function() {
 			$(document).unbind("keydown.hc");

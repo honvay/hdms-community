@@ -141,15 +141,13 @@ app.controller( 'RecentsCtrl',
 		
 		function handleF5(event){
 		    var keycode = event.keyCode;  
-		    if(keycode == 116){  
+		    if(keycode === 116){
 		    	event.preventDefault();  
 		    	$scope.load();
 		    }  
 		}
 		
-		$(document).on("keydown", function(event) {
-			handleF5(event);
-		});
+		$(document).on("keydown", handleF5);
 	
 		$scope.$on("$destroy", function() {
 			$(document).unbind("keydown", handleF5);

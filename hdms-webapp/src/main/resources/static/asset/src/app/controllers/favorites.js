@@ -100,7 +100,7 @@ app.controller( 'FavoritesCtrl',
 		$scope.remove = function(file) {
 			if (!file) {
 				file = $scope.selection;
-				if (file.length == 0) {
+				if (file.length === 0) {
 					Messager.alert("提示", "请选择要删除的文件");
 				}
 			}
@@ -118,15 +118,13 @@ app.controller( 'FavoritesCtrl',
 		
 		function handleF5(event){
 		    var keycode = event.keyCode;  
-		    if(keycode == 116){  
+		    if(keycode === 116){
 		    	event.preventDefault();  
 		    	$scope.load();
 		    }  
 		}
 		
-		$(document).on("keydown", function(event) {
-			handleF5(event);
-		});
+		$(document).on("keydown", handleF5);
 	
 		$scope.$on("$destroy", function() {
 			$(document).unbind("keydown", handleF5);
