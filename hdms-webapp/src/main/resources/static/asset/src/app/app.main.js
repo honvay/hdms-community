@@ -45,6 +45,7 @@ if (window.require) {
                 "app/controllers/authorize", "app/controllers/favorites",
                 "app/controllers/recents", "app/controllers/recycle",
                 "app/controllers/share", "app/controllers/changePassword",
+                "app/controllers/selectUser",
                 "app/controllers/profile", "app/controllers/dropbox",
                 "app/controllers/messages", "app/controllers/search"], factory);
         } else {

@@ -468,7 +468,7 @@ app.controller('FileSendCtrl', [
         $scope.userIds = {};
         $scope.addReceiver = function () {
             var modalInstance = $modal.open({
-                templateUrl: 'asset/tpl/common/user_select.html',
+                templateUrl: 'asset/tpl/app/user_select.html',
                 controller: 'SelectUserCtrl',
                 backdrop: 'static',
                 resolve: {
