@@ -14,6 +14,7 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.context.properties.EnableConfigurationProperties;
 import org.springframework.context.ApplicationEventPublisher;
 import org.springframework.context.annotation.Bean;
+import org.springframework.context.annotation.Configuration;
 import org.springframework.security.authentication.AuthenticationManager;
 import org.springframework.security.authentication.DefaultAuthenticationEventPublisher;
 import org.springframework.security.config.annotation.authentication.builders.AuthenticationManagerBuilder;
@@ -31,6 +32,7 @@ import org.springframework.web.servlet.config.annotation.WebMvcConfigurer;
 /**
  * @author LIQIU
  */
+@Configuration
 @EnableConfigurationProperties(JwtProperties.class)
 public class JwtSecurityConfiguration extends WebSecurityConfigurerAdapter implements WebMvcConfigurer {
 
@@ -90,16 +92,19 @@ public class JwtSecurityConfiguration extends WebSecurityConfigurerAdapter imple
 	@Override
 	protected void configure(HttpSecurity http) throws Exception {
 		http.cors().and().csrf().disable().sessionManagement().sessionCreationPolicy(SessionCreationPolicy.STATELESS);
-		http.authorizeRequests()
-				.antMatchers("/login", "/logout", "/error").permitAll()
+		http.requestMatchers()
+				.antMatchers("/api/**")
+				.and()
+				.authorizeRequests()
+				.antMatchers("/api/login", "/api/logout", "/error").permitAll()
 				.and()
 				.formLogin()
-				.loginProcessingUrl("/login")
+				.loginProcessingUrl("/api/login")
 				.failureHandler(this.failureHandler())
 				.successHandler(this.successHandler())
 				.and()
 				.logout()
-				.logoutRequestMatcher(new AntPathRequestMatcher("/logout"))
+				.logoutRequestMatcher(new AntPathRequestMatcher("/api/logout"))
 				.logoutSuccessHandler(new JwtLogoutSuccessHandler())
 				.and()
 				.exceptionHandling().authenticationEntryPoint(new JwtAuthenticationEntryPoint())

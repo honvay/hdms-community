@@ -6,7 +6,7 @@ import com.aliyun.oss.model.*;
 import com.honvay.hdms.config.properties.StorageConfig;
 import com.honvay.hdms.dms.document.entity.Document;
 import com.honvay.hdms.dms.storage.Storage;
-import org.apache.commons.lang.StringUtils;
+import org.apache.commons.lang3.StringUtils;
 import org.springframework.beans.BeanUtils;
 
 import java.io.ByteArrayInputStream;

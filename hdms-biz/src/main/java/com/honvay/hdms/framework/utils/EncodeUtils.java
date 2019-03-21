@@ -11,7 +11,7 @@ package com.honvay.hdms.framework.utils;
 import org.apache.commons.codec.DecoderException;
 import org.apache.commons.codec.binary.Base64;
 import org.apache.commons.codec.binary.Hex;
-import org.apache.commons.lang.StringEscapeUtils;
+import org.apache.commons.lang3.StringEscapeUtils;
 
 import java.io.UnsupportedEncodingException;
 import java.net.URLDecoder;
@@ -87,33 +87,5 @@ public class EncodeUtils {
 		} catch (UnsupportedEncodingException e) {
 			throw new IllegalArgumentException("Unsupported Encoding Exception", e);
 		}
-	}
-
-	/**
-	 * Html 转码.
-	 */
-	public static String htmlEscape(String html) {
-		return StringEscapeUtils.escapeHtml(html);
-	}
-
-	/**
-	 * Html 解码.
-	 */
-	public static String htmlUnescape(String htmlEscaped) {
-		return StringEscapeUtils.unescapeHtml(htmlEscaped);
-	}
-
-	/**
-	 * Xml 转码.
-	 */
-	public static String xmlEscape(String xml) {
-		return StringEscapeUtils.escapeXml(xml);
-	}
-
-	/**
-	 * Xml 解码.
-	 */
-	public static String xmlUnescape(String xmlEscaped) {
-		return StringEscapeUtils.unescapeXml(xmlEscaped);
 	}
 }

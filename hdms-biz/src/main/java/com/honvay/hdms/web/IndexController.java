@@ -48,7 +48,7 @@ public class IndexController {
 	}
 
 	@ResponseBody
-	@RequestMapping("/environment")
+	@RequestMapping({"/environment","/api/environment"})
 	public Result<Environment> get(@AuthenticationPrincipal AuthenticatedUser authenticatedUser) {
 		UserSpace userSpace = new UserSpace();
 		userSpace.setUsed(documentReadService.getUsedSpace(authenticatedUser.getId()));

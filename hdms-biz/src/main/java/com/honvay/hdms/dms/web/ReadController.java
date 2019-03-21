@@ -38,7 +38,7 @@ import java.util.stream.Stream;
  * @author LIQIU
  */
 @RestController
-@RequestMapping("/fs")
+@RequestMapping(value = {"/fs", "/api"})
 public class ReadController extends BaseController {
 
 	@Autowired

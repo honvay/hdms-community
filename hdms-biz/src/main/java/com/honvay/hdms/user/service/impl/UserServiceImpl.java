@@ -19,7 +19,7 @@ import com.honvay.hdms.user.enums.UserStatus;
 import com.honvay.hdms.user.mapper.UserMapper;
 import com.honvay.hdms.user.model.*;
 import com.honvay.hdms.user.service.UserService;
-import org.apache.commons.lang.StringUtils;
+import org.apache.commons.lang3.StringUtils;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.context.ApplicationListener;
 import org.springframework.security.authentication.UsernamePasswordAuthenticationToken;

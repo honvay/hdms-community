@@ -9,7 +9,7 @@ import com.honvay.hdms.dms.authorize.authentication.annotation.CompositionAuthen
 import com.honvay.hdms.dms.authorize.service.AuthorizeService;
 import org.aopalliance.intercept.MethodInterceptor;
 import org.aopalliance.intercept.MethodInvocation;
-import org.apache.commons.lang.StringUtils;
+import org.apache.commons.lang3.StringUtils;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.core.annotation.AnnotationUtils;
 import org.springframework.security.core.context.SecurityContextHolder;
