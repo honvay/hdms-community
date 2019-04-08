@@ -80,7 +80,7 @@ public class WebSecurityConfiguration extends WebSecurityConfigurerAdapter {
 		http.setSharedObject(CaptchaAuthenticationFilter.class, captchaAuthenticationFilter);
 
 		http.authorizeRequests()
-				.antMatchers("/login", "/logout", "/error").permitAll()
+				.antMatchers("/login", "/logout", "/error", "/fs/stream").permitAll()
 				.antMatchers("/captcha", "/session-invalid").permitAll()
 				.and()
 				.formLogin()

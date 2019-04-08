@@ -123,10 +123,12 @@
         select id from hdms_document a
         where a.mount = #{organizationMount}
         and a.deleted = false
-        and
-        <foreach collection="paths" item="path" open="(" close=")" separator="or">
-            a.path like #{path}
-        </foreach>
+        <if test="paths != null and paths.size() > 0 ">
+            and
+            <foreach collection="paths" item="path" open="(" close=")" separator="or">
+                a.path like #{path}
+            </foreach>
+        </if>
         and a.name like #{name}
         union all
         select id from hdms_document b
@@ -142,10 +144,12 @@
         select 1 from hdms_document a
         where a.mount = #{departmentId}
         and a.deleted = false
-        and
-        <foreach collection="paths" item="path" open="(" close=")" separator="or">
-            a.path like #{path}
-        </foreach>
+        <if test="paths != null and paths.size() > 0 ">
+            and
+            <foreach collection="paths" item="path" open="(" close=")" separator="or">
+                a.path like #{path}
+            </foreach>
+        </if>
         and a.name like #{name}
         union all
         select 1 from hdms_document b
@@ -158,17 +162,20 @@
     <select id="findDeletedFullDocument" resultMap="documentFullDto">
         <include refid="documentFullSql"/>
         where t.id in(
-                select id from hdms_document a
-                where a.mount = #{organizationMount}
-                and a.deleted = true
-                <foreach collection="paths" item="path" open="(" close=")" separator="or">
-                    a.path like #{path}
-                </foreach>
-                union all
-                select id from hdms_document b
-                where b.mount = #{userMount}
-                and b.deleted = true
-            )
+        select id from hdms_document a
+        where a.mount = #{organizationMount}
+        and a.deleted = true
+        <if test="paths != null and paths.size() > 0 ">
+            and
+            <foreach collection="paths" item="path" open="(" close=")" separator="or">
+                a.path like #{path}
+            </foreach>
+        </if>
+        union all
+        select id from hdms_document b
+        where b.mount = #{userMount}
+        and b.deleted = true
+        )
     </select>
 
     <select id="getFullDocument" resultMap="documentFullDto">

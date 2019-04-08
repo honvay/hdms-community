@@ -239,7 +239,7 @@ app.controller('FileDetailCtrl', ['$rootScope', '$scope', '$http', 'FileSystem',
         }
 
         $scope.getPreviewUrl = function (file) {
-            return "/fs/office?token=" + $scope.token;
+            return "/fs/office?id=" + $scope.current.id;
         };
 
         $scope.close = function (reload) {

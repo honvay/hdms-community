@@ -137,7 +137,7 @@
                 </tab>
                 <tab>
                     <tab-heading>
-                        评论{{reviews.length}}
+                        评论({{reviews.length}})
                     </tab-heading>
                     <div class="wrapper-sm b-b">
                         <form name="reviewForm">
@@ -240,17 +240,17 @@
                                                     </div>
                                                     <div ng-if="act.operation === 'moveIn'">
                                                         <div class="text-muted">
-                                                            移入了文件
+                                                            移入了该文件
                                                         </div>
                                                     </div>
                                                     <div ng-if="act.operation === 'moveOut'">
                                                         <div class="text-muted">
-                                                            移出了文件
+                                                            移出了该文件
                                                         </div>
                                                     </div>
                                                     <div ng-if="act.operation === 'download'">
                                                         <div class="text-muted">
-                                                            下载了文件
+                                                            下载了该文件
                                                         </div>
                                                     </div>
                                                     <div ng-if="act.operation === 'addReview'">

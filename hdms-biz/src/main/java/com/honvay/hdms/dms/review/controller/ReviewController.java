@@ -9,6 +9,7 @@ import com.honvay.hdms.framework.support.controller.BaseController;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.security.core.annotation.AuthenticationPrincipal;
 import org.springframework.util.Assert;
+import org.springframework.web.bind.annotation.PathVariable;
 import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RestController;
@@ -35,10 +36,10 @@ public class ReviewController extends BaseController {
 		return this.success(review);
 	}
 
-	@RequestMapping("/delete")
-	public Result<Object> delete(Integer id, @AuthenticationPrincipal AuthenticatedUser user) {
+	@RequestMapping("/delete/{id}")
+	public Result<Object> delete(@PathVariable Integer id, @AuthenticationPrincipal AuthenticatedUser user) {
 		Review review = this.reviewService.get(id);
-		io.jsonwebtoken.lang.Assert.notNull(review, "评论不存在或已删除");
+		Assert.notNull(review, "评论不存在或已删除");
 		Assert.isTrue(review.getUserId().equals(user.getId()), "只能删除自己的评论");
 		reviewService.delete(review);
 		return this.success();
